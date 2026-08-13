@@ -219,7 +219,6 @@ body.buzzer-shake{animation:buzzerShake .5s cubic-bezier(.36,.07,.19,.97) 2}
   <div class="intro-content">
   <div class="vrr-logo">SHOOT IT. <span>OWN IT.</span></div>
   <input type="text" id="playerNameInputMain" class="name-input" maxlength="20" placeholder="Your name" autocomplete="off" style="max-width:320px;margin:8px auto">
-  <div class="rule-t" data-i18n="rules"><b>60 seconds.</b> A basketball flashes once, at a new spot each time, carrying an arrow. Then it's gone — read it, remember it, and tap the matching Swish Shot whenever you're ready. Every make is scored on real speed — the faster you are, the more points you earn. A wrong shot or no response at all earns nothing, but costs you nothing either. How many points can you rack up before the clock runs out?</div>
   <button class="big-btn" id="bigStart" data-i18n="start" onclick="handleStartClick()">▶ START</button>
   <div class="best-line" id="bestLine"></div>
   <button class="box-open-btn" id="openBoxBtn" data-i18n="standingsBtn">🏆 THE STANDINGS</button>
@@ -296,8 +295,6 @@ var introLang='en';
 function applyIntroTranslations(){
   var t=INTRO_I18N[introLang];
   $('fsBtn').textContent=t.fullscreen;
-  document.querySelector('#screen-intro .vrr-sub').textContent=t.subtitle;
-  document.querySelector('#screen-intro .rule-t').innerHTML=t.rules;
   $('bigStart').textContent=t.start;
   $('openBoxBtn').textContent=t.standingsBtn;
   // best-line carries a live number, so it's re-rendered from the
