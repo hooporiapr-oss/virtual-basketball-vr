@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
 <script>
-if (sessionStorage.getItem('vr-arcade-gate-pass') !== '1') {
+if (sessionStorage.getItem('dynamic-basketball-gate-pass') !== '1') {
   window.location.replace('index.html');
 }
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>BUCKETS DON'T LIE. | VR Arcade</title>
+<title>BUCKETS DON'T LIE. | Dynamic Basketball</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:100%;height:100%;overflow:hidden;font-family:Arial,sans-serif;color:#fff;background:#000;user-select:none;-webkit-user-select:none;touch-action:manipulation}
@@ -176,6 +176,17 @@ body.buzzer-shake{animation:buzzerShake .5s cubic-bezier(.36,.07,.19,.97) 2}
 .box-recent-row:last-child{border-bottom:none}
 .box-recent-row b{color:#ffd35a}
 .box-open-btn{width:100%;max-width:420px;height:52px;border:2px solid rgba(0,229,255,.5);background:rgba(0,229,255,.1);border-radius:14px;color:#00e5ff;font-size:.9rem;font-weight:900;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;margin-top:6px}
+
+/* Game switcher — every game's start screen carries the same 4-slot
+   row, so any game (and its own standings, one tap further in) is
+   reachable from any other game without a hub in between. Slots for
+   games not yet built stay visibly present but disabled — an honest
+   "coming soon", not a broken link. */
+.game-switcher{display:flex;gap:8px;max-width:420px;width:100%;margin:18px auto 0}
+.switcher-btn{flex:1;padding:10px 4px;border-radius:12px;text-decoration:none;text-align:center;font-size:.62rem;font-weight:900;letter-spacing:.04em;text-transform:uppercase;line-height:1.3}
+.switcher-btn.game-active{border:2px solid rgba(124,58,237,.5);background:rgba(124,58,237,.12);color:#c9a3fa}
+.switcher-btn.game-current{border:2px solid rgba(124,58,237,.8);background:rgba(124,58,237,.28);color:#fff}
+.switcher-btn.game-soon{border:2px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);color:#4a5058;cursor:default}
 .final-num{font-size:6rem;font-weight:900;color:#7c3aed;line-height:1;text-shadow:0 0 60px rgba(124,58,237,.9)}
 .final-label{font-size:.8rem;letter-spacing:.2em;text-transform:uppercase;color:#9fb3c8;margin-top:10px}
 .final-bpm-big{font-size:1.8rem;font-weight:900;color:#ffd35a;margin-top:10px}
@@ -245,6 +256,12 @@ body.buzzer-shake{animation:buzzerShake .5s cubic-bezier(.36,.07,.19,.97) 2}
   <button class="big-btn" id="bigStart" data-i18n="start" onclick="handleStartClick()">▶ START</button>
   <div class="best-line" id="bestLine"></div>
   <button class="box-open-btn" id="openBoxBtn" data-i18n="standingsBtn">🏆 THE STANDINGS</button>
+  <div class="game-switcher">
+    <a class="switcher-btn game-active" href="vr-shoot-it-own-it.html">1<br>Shoot It.</a>
+    <span class="switcher-btn game-current">2<br>Buckets</span>
+    <span class="switcher-btn game-soon">3<br>Soon</span>
+    <span class="switcher-btn game-soon">4<br>Soon</span>
+  </div>
   </div>
 </div>
 
