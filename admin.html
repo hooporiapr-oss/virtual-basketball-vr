@@ -118,7 +118,7 @@
       <button class="prod-tab" id="tab-mobile" onclick="switchProduct('mobile')">📱 Mobile</button>
       <button class="prod-tab" id="tab-bpm-basketball" onclick="switchProduct('bpm-basketball')">🎯 BPM Basketball</button>
       <button class="prod-tab" id="tab-never-miss-a-shot" onclick="switchProduct('never-miss-a-shot')">🏀 Never Miss A Shot</button>
-      <button class="prod-tab" id="tab-vr-arcade" onclick="switchProduct('vr-arcade')">🥽 VR Arcade</button>
+      <button class="prod-tab" id="tab-dynamic-basketball" onclick="switchProduct('dynamic-basketball')">🥽 Dynamic Basketball</button>
     </div>
 
     <div class="mobile-note" id="mobile-note">⚠️ Mobile codes work differently: a device stays unlocked permanently once it enters a valid code, using local on-device storage rather than a per-visit check. Revoking or deleting a code here blocks it for any <b>new</b> device — it will not retroactively lock out a device that already unlocked with it.</div>
@@ -273,9 +273,9 @@ window.switchProduct = function(product){
   $('tab-mobile').className = 'prod-tab' + (product==='mobile' ? ' active' : '');
   $('tab-bpm-basketball').className = 'prod-tab' + (product==='bpm-basketball' ? ' active' : '');
   $('tab-never-miss-a-shot').className = 'prod-tab' + (product==='never-miss-a-shot' ? ' active' : '');
-  $('tab-vr-arcade').className = 'prod-tab' + (product==='vr-arcade' ? ' active' : '');
+  $('tab-dynamic-basketball').className = 'prod-tab' + (product==='dynamic-basketball' ? ' active' : '');
   $('mobile-note').className = 'mobile-note' + (product==='mobile' ? ' show' : '');
-  var label = product==='ritnome' ? '(Ritnome)' : product==='hooporia' ? '(Hooporia)' : product==='mobile' ? '(Mobile)' : product==='bpm-basketball' ? '(BPM Basketball)' : product==='never-miss-a-shot' ? '(Never Miss A Shot)' : '(VR Arcade)';
+  var label = product==='ritnome' ? '(Ritnome)' : product==='hooporia' ? '(Hooporia)' : product==='mobile' ? '(Mobile)' : product==='bpm-basketball' ? '(BPM Basketball)' : product==='never-miss-a-shot' ? '(Never Miss A Shot)' : '(Dynamic Basketball)';
   $('add-product-label').textContent = label;
   $('list-product-label').textContent = label;
   loadLicenses();
@@ -306,7 +306,7 @@ var STANDINGS_BY_PRODUCT = {
     { name: 'Let It Fly.', table: 'clutch_basketball_standings' },
     { name: 'The Handle', table: 'the_handle_standings' }
   ],
-  'vr-arcade': [
+  'dynamic-basketball': [
     { name: 'Shoot It. Own It.', table: 'vr_shoot_it_own_it_standings' },
     { name: "Buckets Don't Lie.", table: 'vr_buckets_dont_lie_standings' }
   ],
