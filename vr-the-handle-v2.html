@@ -580,7 +580,6 @@ function repHandleTap(ci){
       repIsListening=false;
       score+=repRound;$('hScore').textContent=score;
       repShotLog.push({hit:true,round:repRound,pts:repRound});
-      msg('NICE! 🔥 Round '+repRound+' complete','correct');
       playCongaRoll();
       if(repRound>=3)launchConfetti();
       if(repRound>repBestRound){repBestRound=repRound;localStorage.setItem(BEST_ROUND_KEY,String(repBestRound));}
