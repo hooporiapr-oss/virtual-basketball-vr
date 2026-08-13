@@ -67,6 +67,16 @@ body.buzzer-shake{animation:buzzerShake .5s cubic-bezier(.36,.07,.19,.97) 2}
 }
 .choice-btn{border:3px solid rgba(124,58,237,.5);background:rgba(124,58,237,.08);border-radius:16px;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .08s}
 .choice-btn .arrow-glyph{font-size:1.7rem;line-height:1;display:inline-block;position:relative}
+/* Both glyph shapes exist in the DOM from page load, permanently —
+   never destroyed and recreated between rounds. Only a CSS class
+   toggles which one is visible. This avoids ever re-parsing SVG
+   markup through innerHTML repeatedly, which is what a "sometimes
+   wrong shape" symptom in a VR browser's rendering engine points to:
+   a repaint glitch on repeated SVG creation, not a logic error in
+   which direction was assigned (confirmed correct in testing). */
+.glyph-solid,.glyph-bank{display:none;width:1em;height:1em;align-items:center;justify-content:center}
+.glyph-solid.active,.glyph-bank.active{display:flex}
+.glyph-bank svg{width:100%;height:100%;display:block}
 .choice-btn:active{background:rgba(124,58,237,.35);transform:scale(.94)}
 #slot0{grid-column:2;grid-row:1}
 #slot1{grid-column:3;grid-row:1}
@@ -199,17 +209,17 @@ body.buzzer-shake{animation:buzzerShake .5s cubic-bezier(.36,.07,.19,.97) 2}
 </div>
 
 <div id="msg" class="watch"></div>
-<div id="stage"><div id="stimulus"></div></div>
+<div id="stage"><div id="stimulus"><span class="dir-glyph" id="dirGlyph" style="display:inline-block;position:relative;color:#fff"><span class="glyph-solid">▲</span><span class="glyph-bank"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><polyline points="6,90 50,6 94,90" fill="none" stroke="#fff" stroke-width="12" stroke-linejoin="round" stroke-linecap="round"/></svg></span></span></div></div>
 
 <div id="choices">
-  <button class="choice-btn" id="slot0"><span class="arrow-glyph"></span></button>
-  <button class="choice-btn" id="slot1"><span class="arrow-glyph"></span></button>
-  <button class="choice-btn" id="slot2"><span class="arrow-glyph"></span></button>
-  <button class="choice-btn" id="slot3"><span class="arrow-glyph"></span></button>
-  <button class="choice-btn" id="slot4"><span class="arrow-glyph"></span></button>
-  <button class="choice-btn" id="slot5"><span class="arrow-glyph"></span></button>
-  <button class="choice-btn" id="slot6"><span class="arrow-glyph"></span></button>
-  <button class="choice-btn" id="slot7"><span class="arrow-glyph"></span></button>
+  <button class="choice-btn" id="slot0"><span class="arrow-glyph"><span class="glyph-solid">▲</span><span class="glyph-bank"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><polyline points="6,90 50,6 94,90" fill="none" stroke="#fff" stroke-width="12" stroke-linejoin="round" stroke-linecap="round"/></svg></span></span></button>
+  <button class="choice-btn" id="slot1"><span class="arrow-glyph"><span class="glyph-solid">▲</span><span class="glyph-bank"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><polyline points="6,90 50,6 94,90" fill="none" stroke="#fff" stroke-width="12" stroke-linejoin="round" stroke-linecap="round"/></svg></span></span></button>
+  <button class="choice-btn" id="slot2"><span class="arrow-glyph"><span class="glyph-solid">▲</span><span class="glyph-bank"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><polyline points="6,90 50,6 94,90" fill="none" stroke="#fff" stroke-width="12" stroke-linejoin="round" stroke-linecap="round"/></svg></span></span></button>
+  <button class="choice-btn" id="slot3"><span class="arrow-glyph"><span class="glyph-solid">▲</span><span class="glyph-bank"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><polyline points="6,90 50,6 94,90" fill="none" stroke="#fff" stroke-width="12" stroke-linejoin="round" stroke-linecap="round"/></svg></span></span></button>
+  <button class="choice-btn" id="slot4"><span class="arrow-glyph"><span class="glyph-solid">▲</span><span class="glyph-bank"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><polyline points="6,90 50,6 94,90" fill="none" stroke="#fff" stroke-width="12" stroke-linejoin="round" stroke-linecap="round"/></svg></span></span></button>
+  <button class="choice-btn" id="slot5"><span class="arrow-glyph"><span class="glyph-solid">▲</span><span class="glyph-bank"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><polyline points="6,90 50,6 94,90" fill="none" stroke="#fff" stroke-width="12" stroke-linejoin="round" stroke-linecap="round"/></svg></span></span></button>
+  <button class="choice-btn" id="slot6"><span class="arrow-glyph"><span class="glyph-solid">▲</span><span class="glyph-bank"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><polyline points="6,90 50,6 94,90" fill="none" stroke="#fff" stroke-width="12" stroke-linejoin="round" stroke-linecap="round"/></svg></span></span></button>
+  <button class="choice-btn" id="slot7"><span class="arrow-glyph"><span class="glyph-solid">▲</span><span class="glyph-bank"><svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><polyline points="6,90 50,6 94,90" fill="none" stroke="#fff" stroke-width="12" stroke-linejoin="round" stroke-linecap="round"/></svg></span></span></button>
 </div>
 
 <div id="controls">
@@ -565,15 +575,29 @@ var ALL_DIRS=['up','up-right','right','down-right','down','down-left','left','up
 // pure directional chevron — the two angled sides converging on the
 // tip, with the bottom base edge removed entirely. A closed triangle
 // outline can still read as a generic shape; dropping the base makes
-// this unmistakably a pointer, not a shape, at a glance.
-var BANK_SVG='<svg viewBox="0 0 100 100" style="width:1em;height:1em;display:block" xmlns="http://www.w3.org/2000/svg"><polyline points="6,90 50,6 94,90" fill="none" stroke="#fff" stroke-width="12" stroke-linejoin="round" stroke-linecap="round"/></svg>';
-function glyphFor(dir){return dir.indexOf('-')===-1?'▲':BANK_SVG}
+// this unmistakably a pointer, not a shape, at a glance. Both shapes
+// exist as permanent DOM elements from page load — only a CSS class
+// toggles which one shows, so neither is ever destroyed and rebuilt.
+function isDiagonal(dir){return dir.indexOf('-')!==-1}
+function setButtonGlyph(glyphEl,dir){
+  var solid=glyphEl.querySelector('.glyph-solid');
+  var bank=glyphEl.querySelector('.glyph-bank');
+  if(isDiagonal(dir)){
+    solid.classList.remove('active');
+    bank.classList.add('active');
+  }else{
+    bank.classList.remove('active');
+    solid.classList.add('active');
+  }
+}
 var noResponseTimer=null;
 
 function nextTrial(){
   if(phase!=='running')return;
   currentSide=ALL_DIRS[Math.floor(Math.random()*ALL_DIRS.length)];
-  stimulus.innerHTML='<span class="dir-glyph" style="display:inline-block;position:relative;color:#fff;transform:rotate('+ROTATIONS[currentSide]+'deg)">'+glyphFor(currentSide)+'</span>';
+  var dirGlyph=$('dirGlyph');
+  dirGlyph.style.transform='rotate('+ROTATIONS[currentSide]+'deg)';
+  setButtonGlyph(dirGlyph,currentSide);
   var pos=randomStagePos();
   stimulus.style.left=pos.x+'px';
   stimulus.style.top=pos.y+'px';
@@ -615,7 +639,7 @@ function shuffleButtonLayout(){
     var btn=$(slotId);
     btn.dataset.dir=dir;
     var glyph=btn.querySelector('.arrow-glyph');
-    glyph.innerHTML=glyphFor(dir);
+    setButtonGlyph(glyph,dir);
     glyph.style.transform='rotate('+ROTATIONS[dir]+'deg)';
   });
 }
