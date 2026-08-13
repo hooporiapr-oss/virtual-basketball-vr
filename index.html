@@ -26,7 +26,12 @@ html,body{height:100%;overflow-x:hidden;font-family:'Outfit',sans-serif;backgrou
 .nav-icon-btn:active{background:rgba(255,215,0,0.2);transform:scale(0.9)}
 
 /* CONTAINER */
-.container{max-width:500px;margin:0 auto;padding:calc(var(--nav-height) + env(safe-area-inset-top) + 10px) 16px 20px;min-height:100dvh;display:flex;flex-direction:column}
+/* Fixed to the viewport rather than min-height:100dvh — dvh
+   recalculates whenever a VR browser's UI chrome shifts, and
+   reacting to that recalculation is what causes the page to drift
+   on its own. Fixed positioning removes the dependency entirely,
+   same fix already proven on the hub pages. */
+.container{position:fixed;inset:0;overflow-y:auto;max-width:500px;margin:0 auto;padding:calc(var(--nav-height) + env(safe-area-inset-top) + 10px) 16px 20px;display:flex;flex-direction:column}
 
 /* Hero */
 .bori-hero{text-align:center;padding:4px 0 8px;position:relative}
@@ -125,7 +130,7 @@ html,body{height:100%;overflow-x:hidden;font-family:'Outfit',sans-serif;backgrou
 .setup-stats-btn{background:none;border:none;color:rgba(255,255,255,.35);font-family:var(--body);font-size:13px;font-weight:600;cursor:pointer;padding:8px}
 .setup-stats-btn:active{color:rgba(255,255,255,.5)}
 .start-btn-big{width:100%;padding:20px;font-size:1.3rem;margin-top:8px}
-.play-screen{display:flex;flex-direction:column;align-items:center;min-height:calc(100vh - 20px);min-height:calc(100dvh - 20px)}
+.play-screen{display:flex;flex-direction:column;align-items:center;min-height:100%}
 .play-screen.hidden{display:none}
 .play-header{display:flex;align-items:center;justify-content:space-between;width:100%;padding:8px 0 12px}
 .play-back-btn{background:none;border:2px solid rgba(255,255,255,.15);border-radius:50%;width:36px;height:36px;color:var(--cream);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
@@ -326,20 +331,13 @@ html,body{height:100%;overflow-x:hidden;font-family:'Outfit',sans-serif;backgrou
 .powered-strip{text-align:center;padding:12px 0;margin-top:10px;opacity:0.4}
 .powered-strip span{font-family:'Bebas Neue',sans-serif;font-size:0.7rem;color:var(--gold);letter-spacing:2px}
 
-/* Name entry — required before every game, same reasoning as the
-   rest of the platform: a standings board only means something if
-   every score is honestly attributed to a real player, not left
-   anonymous. Built in The Handle's own visual language rather than
-   importing the other games' CSS classes wholesale. */
-.name-screen{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 20px);min-height:calc(100dvh - 20px);text-align:center;padding:16px 0}
-.name-screen.show{display:flex}
-.name-title{font-family:'Bebas Neue',sans-serif;font-size:2rem;letter-spacing:5px;color:var(--gold);margin-bottom:6px}
-.name-sub{font-size:13px;color:rgba(255,255,255,.5);max-width:320px;margin-bottom:24px;line-height:1.5}
+/* Name entry — no separate screen, no dead viewport-height rules
+   here either — the input sits directly on the setup screen now. */
 .name-input{width:100%;max-width:320px;padding:16px;border-radius:16px;border:2px solid rgba(255,215,0,.3);background:rgba(255,255,255,.06);color:var(--cream);font-family:'Outfit',sans-serif;font-size:1.1rem;text-align:center;margin-bottom:16px}
 .name-input:focus{outline:none;border-color:var(--gold)}
 
 /* Standings screen */
-.standings-screen{display:none;flex-direction:column;min-height:calc(100vh - 20px);min-height:calc(100dvh - 20px);padding:16px 0;width:100%}
+.standings-screen{display:none;flex-direction:column;min-height:100%;padding:16px 0;width:100%}
 .standings-screen.show{display:flex}
 .standings-header{display:flex;align-items:center;justify-content:space-between;width:100%;padding:0 0 16px}
 .standings-back-btn{background:none;border:2px solid rgba(255,255,255,.15);border-radius:50%;width:36px;height:36px;color:var(--cream);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
@@ -425,7 +423,7 @@ html,body{height:100%;overflow-x:hidden;font-family:'Outfit',sans-serif;backgrou
 <div class="setup-screen" id="setupScreen">
 <div class="bori-hero">
 <div class="bori-hero-title">THE HANDLE</div>
-<div class="bori-hero-sub">Watch. Remember. Repeat.</div>
+<input type="text" id="playerNameInputMain" class="name-input" maxlength="20" placeholder="Your name" autocomplete="off" style="max-width:280px;margin-top:10px">
 <button class="mode-help-btn" id="howToPlayBtn" style="position:static;transform:none;display:inline-flex;width:auto;height:auto;padding:6px 14px;border-radius:20px;margin:10px auto 0;font-size:11px;letter-spacing:2px">? HOW TO PLAY</button>
 </div>
 
@@ -434,15 +432,6 @@ html,body{height:100%;overflow-x:hidden;font-family:'Outfit',sans-serif;backgrou
 <div class="setup-links">
 <button class="setup-stats-btn" id="openStandingsBtn">🏆 Standings</button>
 </div>
-</div>
-
-<!-- Name entry -->
-<div class="name-screen" id="nameScreen">
-<button class="standings-back-btn" id="nameBackBtn" style="align-self:flex-start;margin-bottom:16px">←</button>
-<div class="name-title">WHO'S PLAYING?</div>
-<div class="name-sub">Enter your name to take your turn. Your best score gets tracked on the standings — every player on this device competing for the same board.</div>
-<input type="text" id="playerNameInput" class="name-input" maxlength="20" placeholder="Your name" autocomplete="off">
-<button class="start-btn" id="nameContinueBtn" style="max-width:320px">▶ Continue</button>
 </div>
 
 <!-- Standings -->
@@ -961,7 +950,6 @@ var navBackBtn=document.getElementById('navBackBtn');
 // predictable way, regardless of where it was reached from.
 function showScreen(name){
 setupScreen.style.display='none';
-document.getElementById('nameScreen').classList.remove('show');
 playScreen.classList.add('hidden');
 document.getElementById('standingsScreen').classList.remove('show');
 challengeComplete.classList.remove('show');
@@ -969,12 +957,6 @@ challengeComplete.classList.remove('show');
 if(name==='setup'){
 setupScreen.style.display='flex';
 navBackBtn.textContent='← Back';navBackBtn.href='index.html';navBackBtn.onclick=null;
-}else if(name==='name'){
-document.getElementById('nameScreen').classList.add('show');
-document.getElementById('playerNameInput').value=currentPlayerName;
-setTimeout(function(){document.getElementById('playerNameInput').focus()},50);
-navBackBtn.textContent='← Back';navBackBtn.href='#';
-navBackBtn.onclick=function(e){e.preventDefault();showScreen('setup')};
 }else if(name==='play'){
 playScreen.classList.remove('hidden');
 playModeName.textContent=MODE_LABELS[currentMode]||'THE HANDLE';
@@ -990,24 +972,26 @@ navBackBtn.onclick=function(e){e.preventDefault();showScreen('setup')};
 }
 }
 
-startBtn.onclick=function(){initAudio();showScreen('name')};
-
-document.getElementById('nameBackBtn').addEventListener('click',function(){showScreen('setup')});
-
-document.getElementById('nameContinueBtn').addEventListener('click',function(){
-var name=document.getElementById('playerNameInput').value.trim();
+// Start reads the name directly from the input sitting right on the
+// setup screen and launches straight into the game — no separate
+// name-entry screen to transition through first. One fewer screen
+// swap is one fewer chance for a VR browser's layout to misbehave.
+startBtn.onclick=function(){
+initAudio();
+var nameField=document.getElementById('playerNameInputMain');
+var name=nameField.value.trim();
 if(!name){
-document.getElementById('playerNameInput').focus();
-document.getElementById('playerNameInput').style.borderColor='#ff4444';
-setTimeout(function(){document.getElementById('playerNameInput').style.borderColor=''},600);
+nameField.focus();
+nameField.style.borderColor='#ff4444';
+setTimeout(function(){nameField.style.borderColor=''},600);
 return;
 }
 currentPlayerName=name;
 showScreen('play');
 showCountdown(function(){repStart()});
-});
-document.getElementById('playerNameInput').addEventListener('keydown',function(e){
-if(e.key==='Enter')document.getElementById('nameContinueBtn').click();
+};
+document.getElementById('playerNameInputMain').addEventListener('keydown',function(e){
+if(e.key==='Enter')startBtn.click();
 });
 
 stopBtn.onclick=function(){
