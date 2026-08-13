@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>
+if (sessionStorage.getItem('vr-arcade-gate-pass') !== '1') {
+  window.location.replace('index.html');
+}
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>BUCKETS DON'T LIE. | VR Arcade</title>
@@ -228,7 +233,7 @@ body.buzzer-shake{animation:buzzerShake .5s cubic-bezier(.36,.07,.19,.97) 2}
 
 <!-- INTRO -->
 <div id="screen-intro">
-  <a class="intro-back" href="index.html">← Back</a>
+  <a class="intro-back" href="vr-shoot-it-own-it.html">← Back</a>
   <button class="intro-fs" id="fsBtn" data-i18n="fullscreen">⛶ Fullscreen</button>
   <div class="box-lang-toggle">
     <button class="box-lang-btn active" id="introLangEN">EN</button>
@@ -263,7 +268,7 @@ body.buzzer-shake{animation:buzzerShake .5s cubic-bezier(.36,.07,.19,.97) 2}
 
 <!-- END -->
 <div id="screen-end">
-  <a class="intro-back" href="index.html">← Back</a>
+  <a class="intro-back" href="vr-shoot-it-own-it.html">← Back</a>
   <div class="final-num" id="endNum">0</div>
   <div class="final-label">Total Points</div>
   <div class="final-bpm-big" id="endBpm"></div>
@@ -273,7 +278,7 @@ body.buzzer-shake{animation:buzzerShake .5s cubic-bezier(.36,.07,.19,.97) 2}
   <h2 id="endHead">Drill Complete!</h2>
   <div id="endSub">Great choices. Next player, beat this number!</div>
   <button class="next-player-btn" id="nextPlayerBtn">▶ Next Player</button>
-  <a href="index.html" style="display:block;margin-top:12px;max-width:280px;margin-left:auto;margin-right:auto;text-decoration:none;text-align:center;padding:14px 24px;border-radius:100px;background:linear-gradient(135deg,#00e5ff,#7c3aed);color:#0a0a12;font-weight:900;letter-spacing:1px;font-size:.95rem">▶ NEXT GAME</a>
+  <a href="vr-shoot-it-own-it.html" style="display:block;margin-top:12px;max-width:280px;margin-left:auto;margin-right:auto;text-decoration:none;text-align:center;padding:14px 24px;border-radius:100px;background:linear-gradient(135deg,#00e5ff,#7c3aed);color:#0a0a12;font-weight:900;letter-spacing:1px;font-size:.95rem">▶ NEXT GAME</a>
   <div class="session-line" id="sessionLine"></div>
 </div>
 
@@ -493,7 +498,7 @@ $('openBoxBtn').onclick=function(){
   $('screen-box').style.display='flex';
 };
 $('closeBoxBtn').onclick=function(){
-  window.location.href='index.html';
+  window.location.href='vr-shoot-it-own-it.html';
 };
 
 var fsb=$('fsBtn');
