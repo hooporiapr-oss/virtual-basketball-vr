@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PARADISO · License Admin</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:#0a0a0f;color:#e8eef5;min-height:100vh;padding:24px}
+  .wrap{max-width:1100px;margin:0 auto}
+
+  .top{display:flex;align-items:center;justify-content:space-between;margin-bottom:26px;flex-wrap:wrap;gap:12px}
+  .brand .kick{font-size:.62rem;font-weight:900;letter-spacing:.34em;text-transform:uppercase;color:#ff1e3c}
+  .brand .name{font-size:1.8rem;font-weight:900;font-style:italic;letter-spacing:.03em;text-transform:uppercase;color:#fff;line-height:1}
+  .brand .sub{font-size:.64rem;font-weight:900;letter-spacing:.22em;text-transform:uppercase;color:#8892a0;margin-top:2px}
+  .signout{padding:8px 16px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.05);color:#e8eef5;border-radius:8px;font-size:.78rem;font-weight:700;cursor:pointer}
+
+  /* login */
+  #login{max-width:380px;margin:80px auto 0;background:rgba(255,255,255,.04);border:1px solid rgba(255,30,60,.25);border-radius:14px;padding:32px}
+  #login h2{font-size:.8rem;font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:#ff1e3c;text-align:center;margin-bottom:20px}
+  .fld{margin-bottom:14px}
+  .fld label{display:block;font-size:.66rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:#8892a0;margin-bottom:6px}
+  .fld input{width:100%;padding:12px 14px;border-radius:8px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.08);color:#fff;font-size:1rem}
+  .btn{width:100%;padding:13px;border:none;border-radius:8px;background:linear-gradient(135deg,#ff1e3c,#c8102e);color:#fff;font-weight:900;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;font-size:.9rem}
+  .btn:hover{transform:translateY(-1px);box-shadow:0 6px 16px rgba(255,30,60,.3)}
+  .msg{text-align:center;font-size:.82rem;margin-top:12px;min-height:18px}
+  .msg.bad{color:#ff8888}.msg.ok{color:#00d9a5}
+
+  /* dashboard */
+  #dash{display:none}
+  .prod-tabs{display:flex;gap:8px;margin-bottom:18px}
+  .prod-tab{padding:9px 18px;border-radius:999px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.04);color:#8892a0;font-weight:800;font-size:.82rem;cursor:pointer;letter-spacing:.02em}
+  .prod-tab.active{background:rgba(255,30,60,.16);border-color:rgba(255,30,60,.5);color:#fff}
+  #add-product-label,#list-product-label{color:#8892a0;font-weight:700;text-transform:none;letter-spacing:0;font-size:.85rem}
+  .add-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:18px 20px;margin-bottom:22px}
+  .mobile-note{display:none;background:rgba(255,180,80,.08);border:1px solid rgba(255,180,80,.3);border-radius:10px;padding:12px 16px;margin-bottom:16px;font-size:.8rem;color:#ffb450;line-height:1.5}
+  .mobile-note.show{display:block}
+  .add-title{font-size:.7rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#8892a0;margin-bottom:14px}
+  .add-row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+  .af{display:flex;flex-direction:column;gap:5px}
+  .af label{font-size:.6rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#8892a0}
+  .af input{padding:10px 12px;border-radius:8px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.92);color:#222;font-size:.95rem;font-weight:600}
+  .af input#a-code{width:200px;text-transform:uppercase}
+  .af input#a-school{width:220px}
+  .add-btn{padding:11px 20px;border:none;border-radius:8px;background:linear-gradient(135deg,#00d9a5,#00a884);color:#062;font-weight:900;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;font-size:.85rem}
+
+  .list-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+  .list-title{font-size:.7rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#8892a0}
+  .refresh{background:none;border:1px solid rgba(255,255,255,.15);color:#8892a0;border-radius:8px;padding:6px 12px;font-size:.72rem;font-weight:700;cursor:pointer}
+
+  table{width:100%;border-collapse:collapse;background:rgba(255,255,255,.02);border-radius:12px;overflow:hidden}
+  th{text-align:left;font-size:.62rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:#ff8896;padding:12px 14px;background:rgba(255,30,60,.1)}
+  td{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,.05);font-size:.9rem}
+  tr:hover td{background:rgba(255,255,255,.02)}
+  .code-cell{font-family:'Courier New',monospace;font-weight:900;color:#fff}
+  .pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:.66rem;font-weight:900;text-transform:uppercase;letter-spacing:.04em}
+  .pill.active{background:rgba(0,217,165,.18);color:#00d9a5}
+  .pill.inactive{background:rgba(255,107,107,.18);color:#ff8888}
+  .pill.expired{background:rgba(255,180,80,.18);color:#ffb450}
+  .exp-soon{color:#ffb450;font-weight:700}
+  .row-actions{display:flex;gap:6px;flex-wrap:wrap}
+  .mini{padding:5px 10px;border-radius:6px;font-size:.7rem;font-weight:800;cursor:pointer;border:1px solid transparent}
+  .mini.renew{background:rgba(0,140,255,.15);border-color:rgba(0,140,255,.3);color:#4db8ff}
+  .mini.toggle{background:rgba(255,180,80,.15);border-color:rgba(255,180,80,.3);color:#ffb450}
+  .mini.del{background:rgba(255,60,60,.15);border-color:rgba(255,60,60,.3);color:#ff6b6b}
+  .empty{text-align:center;color:#5a6070;padding:30px}
+  .count{font-size:.7rem;color:#8892a0}
+
+  /* Standings reset — deliberately its own separate, lower-key card
+     from license management above. This used to be a button on every
+     public game screen; moving it here means wiping a shared board
+     now requires a real login, not just a tap a curious player could
+     reach on a shared classroom device. */
+  .standings-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:18px 20px;margin-top:22px}
+  .standings-card.hidden{display:none}
+  .standings-title{font-size:.7rem;font-weight:900;letter-spacing:.14em;text-transform:uppercase;color:#8892a0;margin-bottom:14px}
+  .standings-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+  .standings-row:last-child{border-bottom:none}
+  .standings-game-name{font-size:.92rem;font-weight:700;color:#fff}
+  .standings-reset-btn{padding:8px 16px;border-radius:8px;border:1px solid rgba(255,60,60,.3);background:rgba(255,60,60,.12);color:#ff6b6b;font-size:.75rem;font-weight:800;cursor:pointer}
+  .standings-confirm{display:none;margin-top:10px;padding:14px;border:1px solid rgba(255,30,60,.4);background:rgba(255,30,60,.06);border-radius:10px}
+  .standings-confirm.show{display:block}
+  .standings-confirm-text{font-size:.8rem;color:#ff8fa3;font-weight:700;margin-bottom:10px}
+  .standings-confirm-actions{display:flex;gap:8px}
+  .standings-confirm-actions button{padding:8px 14px;border-radius:8px;font-size:.72rem;font-weight:800;cursor:pointer}
+  .standings-cancel-btn{border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.05);color:#fff}
+  .standings-yes-btn{border:none;background:#ff1e3c;color:#fff}
+  .standings-msg{font-size:.72rem;margin-top:8px;min-height:16px}
+  .standings-msg.ok{color:#00d9a5}.standings-msg.bad{color:#ff8888}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div class="brand">
+      <div class="kick">⚡ Reactific</div>
+      <div class="name">License Admin</div>
+      <div class="sub">Manage School Access</div>
+    </div>
+    <button class="signout" id="signout-btn" onclick="signOut()" style="display:none">Sign Out</button>
+  </div>
+
+  <!-- LOGIN -->
+  <div id="login">
+    <h2>🔒 Admin Login</h2>
+    <div class="fld"><label>Email</label><input id="l-email" type="email" placeholder="you@email.com" onkeydown="if(event.key==='Enter')login()"></div>
+    <div class="fld"><label>Password</label><input id="l-pass" type="password" placeholder="Password" onkeydown="if(event.key==='Enter')login()"></div>
+    <button class="btn" onclick="login()">Sign In</button>
+    <div class="msg" id="login-msg"></div>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dash">
+    <div class="prod-tabs">
+      <button class="prod-tab active" id="tab-ritnome" onclick="switchProduct('ritnome')">⚡ Ritnome</button>
+      <button class="prod-tab" id="tab-hooporia" onclick="switchProduct('hooporia')">🏀 Hooporia</button>
+      <button class="prod-tab" id="tab-mobile" onclick="switchProduct('mobile')">📱 Mobile</button>
+      <button class="prod-tab" id="tab-bpm-basketball" onclick="switchProduct('bpm-basketball')">🎯 BPM Basketball</button>
+      <button class="prod-tab" id="tab-never-miss-a-shot" onclick="switchProduct('never-miss-a-shot')">🏀 Never Miss A Shot</button>
+      <button class="prod-tab" id="tab-vr-arcade" onclick="switchProduct('vr-arcade')">🥽 VR Arcade</button>
+    </div>
+
+    <div class="mobile-note" id="mobile-note">⚠️ Mobile codes work differently: a device stays unlocked permanently once it enters a valid code, using local on-device storage rather than a per-visit check. Revoking or deleting a code here blocks it for any <b>new</b> device — it will not retroactively lock out a device that already unlocked with it.</div>
+
+    <div class="add-card">
+      <div class="add-title">➕ Add a License <span id="add-product-label"></span></div>
+      <div class="add-row">
+        <div class="af"><label>Code</label><input id="a-code" placeholder="LINCOLN-PREP-2026" maxlength="40"></div>
+        <div class="af"><label>School Name</label><input id="a-school" placeholder="Lincoln Prep Academy" maxlength="60"></div>
+        <div class="af"><label>Expires</label><input id="a-expires" type="date"></div>
+        <div class="af"><label>Notes (optional)</label><input id="a-notes" placeholder="Paid annual" maxlength="80"></div>
+        <button class="add-btn" onclick="addLicense()">+ Add</button>
+      </div>
+      <div class="msg" id="add-msg"></div>
+    </div>
+
+    <div class="list-head">
+      <div class="list-title">Licensed Schools <span id="list-product-label"></span> <span class="count" id="count"></span></div>
+      <button class="refresh" onclick="loadLicenses()">↻ Refresh</button>
+    </div>
+
+    <table>
+      <thead>
+        <tr><th>Code</th><th>School</th><th>Expires</th><th>Status</th><th>Notes</th><th>Actions</th></tr>
+      </thead>
+      <tbody id="rows"><tr><td colspan="6" class="empty">Loading…</td></tr></tbody>
+    </table>
+
+    <!-- Standings reset — only shown for products that actually have
+         game standings (Ritnome, BPM Basketball). Hidden entirely for
+         Hooporia and Mobile, which don't have this. -->
+    <div class="standings-card hidden" id="standings-card">
+      <div class="standings-title">🏆 Standings — Reset a Shared Board</div>
+      <div id="standings-list"></div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════
+//  This admin panel talks to Supabase directly over fetch(),
+//  the same proven approach the gate pages already use —
+//  deliberately NOT loading the Supabase JS client from a
+//  CDN. That earlier approach meant this page's login button
+//  depended on a third-party script finishing over the network
+//  on every single load; if that ever failed (a connection
+//  hiccup, a blocking extension, a slow CDN moment), the whole
+//  page silently broke with zero explanation. Removing that
+//  dependency makes that entire category of failure structurally
+//  impossible — there's nothing external left to fail to load.
+// ══════════════════════════════════════════════════════
+var SUPABASE_URL = 'https://sdaphocueugzfvjovuxd.supabase.co';
+var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkYXBob2N1ZXVnemZ2am92dXhkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM2MjQyMDgsImV4cCI6MjA5OTIwMDIwOH0.pDAzf4P6dD9eNEBlnP95SdF5BI-R84-Rdc0vKzYcn7M';
+// ══════════════════════════════════════════════════════
+
+var $ = function(id){ return document.getElementById(id); };
+var currentProduct = 'ritnome';
+var accessToken = null, refreshToken = null;
+
+function saveSession(at, rt){
+  accessToken = at; refreshToken = rt;
+  try{ localStorage.setItem('admin-at', at); localStorage.setItem('admin-rt', rt); }catch(e){}
+}
+function clearSession(){
+  accessToken = null; refreshToken = null;
+  try{ localStorage.removeItem('admin-at'); localStorage.removeItem('admin-rt'); }catch(e){}
+}
+
+function authHeaders(){
+  return {
+    'apikey': SUPABASE_ANON_KEY,
+    'Authorization': 'Bearer ' + (accessToken || SUPABASE_ANON_KEY),
+    'Content-Type': 'application/json'
+  };
+}
+
+// ── auth ──
+async function checkSession(){
+  try{ accessToken = localStorage.getItem('admin-at'); refreshToken = localStorage.getItem('admin-rt'); }catch(e){}
+  if (!accessToken){ showLogin(); return; }
+  // confirm the stored token still actually works before trusting it
+  var ok = await tryRequest(SUPABASE_URL + '/rest/v1/licenses?select=id&limit=1');
+  if (ok) { showDash(); return; }
+  // token may just be expired — try a refresh before giving up
+  if (refreshToken && await doRefresh()) { showDash(); return; }
+  clearSession();
+  showLogin();
+}
+
+async function tryRequest(url){
+  try{
+    var r = await fetch(url, { headers: authHeaders() });
+    return r.ok;
+  }catch(e){ return false; }
+}
+
+async function doRefresh(){
+  try{
+    var r = await fetch(SUPABASE_URL + '/auth/v1/token?grant_type=refresh_token', {
+      method: 'POST',
+      headers: { 'apikey': SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ refresh_token: refreshToken })
+    });
+    if (!r.ok) return false;
+    var data = await r.json();
+    if (!data.access_token) return false;
+    saveSession(data.access_token, data.refresh_token);
+    return true;
+  }catch(e){ return false; }
+}
+
+function showLogin(){ $('login').style.display='block'; $('dash').style.display='none'; $('signout-btn').style.display='none'; }
+function showDash(){ $('login').style.display='none'; $('dash').style.display='block'; $('signout-btn').style.display='inline-block'; switchProduct(currentProduct); }
+
+window.login = async function(){
+  var email = $('l-email').value.trim();
+  var password = $('l-pass').value;
+  if (!email || !password){ $('login-msg').className='msg bad'; $('login-msg').textContent='Enter your email and password'; return; }
+  $('login-msg').className='msg'; $('login-msg').textContent='Signing in…';
+  try{
+    var r = await fetch(SUPABASE_URL + '/auth/v1/token?grant_type=password', {
+      method: 'POST',
+      headers: { 'apikey': SUPABASE_ANON_KEY, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: email, password: password })
+    });
+    var data = await r.json();
+    if (!r.ok || !data.access_token){
+      $('login-msg').className='msg bad';
+      $('login-msg').textContent = data.error_description || data.msg || 'Invalid email or password';
+      return;
+    }
+    saveSession(data.access_token, data.refresh_token);
+    $('login-msg').textContent='';
+    showDash();
+  }catch(e){
+    $('login-msg').className='msg bad';
+    $('login-msg').textContent='Connection problem — please try again';
+  }
+};
+
+window.signOut = async function(){
+  try{ await fetch(SUPABASE_URL + '/auth/v1/logout', { method:'POST', headers: authHeaders() }); }catch(e){}
+  clearSession();
+  showLogin();
+};
+
+window.switchProduct = function(product){
+  currentProduct = product;
+  $('tab-ritnome').className = 'prod-tab' + (product==='ritnome' ? ' active' : '');
+  $('tab-hooporia').className = 'prod-tab' + (product==='hooporia' ? ' active' : '');
+  $('tab-mobile').className = 'prod-tab' + (product==='mobile' ? ' active' : '');
+  $('tab-bpm-basketball').className = 'prod-tab' + (product==='bpm-basketball' ? ' active' : '');
+  $('tab-never-miss-a-shot').className = 'prod-tab' + (product==='never-miss-a-shot' ? ' active' : '');
+  $('tab-vr-arcade').className = 'prod-tab' + (product==='vr-arcade' ? ' active' : '');
+  $('mobile-note').className = 'mobile-note' + (product==='mobile' ? ' show' : '');
+  var label = product==='ritnome' ? '(Ritnome)' : product==='hooporia' ? '(Hooporia)' : product==='mobile' ? '(Mobile)' : product==='bpm-basketball' ? '(BPM Basketball)' : product==='never-miss-a-shot' ? '(Never Miss A Shot)' : '(VR Arcade)';
+  $('add-product-label').textContent = label;
+  $('list-product-label').textContent = label;
+  loadLicenses();
+  renderStandingsSection(product);
+};
+
+// ── standings reset ──
+// Only Ritnome and BPM Basketball have real, shared game standings.
+// Every game's own standings screen used to carry its own "Reset"
+// button; that's now removed from every game, and this is the only
+// place a shared board can be wiped — behind this page's real login,
+// not a tap any player passing through could reach.
+var STANDINGS_BY_PRODUCT = {
+  'bpm-basketball': [
+    { name: 'The Cardinal', table: 'flash_basketball_standings' },
+    { name: 'The Full Compass', table: 'eight_direction_standings' },
+    { name: 'True North', table: 'true_north_standings' },
+    { name: 'Magnetic North', table: 'magnetic_north_standings' }
+  ],
+  'ritnome': [
+    { name: 'Flash Reaction', table: 'velo_flash_reaction_standings' },
+    { name: 'Moving Target', table: 'velo_moving_target_standings' }
+  ],
+  'never-miss-a-shot': [
+    { name: 'Shoot It. Own It.', table: 'flash_break_standings' },
+    { name: "Buckets Don't Lie.", table: 'alley_oop_standings' },
+    { name: 'Make It Count.', table: 'unstoppable_standings' },
+    { name: 'Let It Fly.', table: 'clutch_basketball_standings' },
+    { name: 'The Handle', table: 'the_handle_standings' }
+  ],
+  'vr-arcade': [
+    { name: 'Shoot It. Own It.', table: 'vr_shoot_it_own_it_standings' },
+    { name: "Buckets Don't Lie.", table: 'vr_buckets_dont_lie_standings' }
+  ],
+  'hooporia': [
+    { name: 'The Handle', table: 'hooporia_handle_standings' }
+  ],
+  'mobile': [
+    { name: 'The Handle', table: 'ritnome_mobile_handle_standings' }
+  ]
+};
+
+function renderStandingsSection(product){
+  var games = STANDINGS_BY_PRODUCT[product];
+  var card = $('standings-card');
+  if(!games){
+    card.className = 'standings-card hidden';
+    return;
+  }
+  card.className = 'standings-card';
+  $('standings-list').innerHTML = games.map(function(g){
+    var safeId = g.table;
+    return '<div class="standings-row">'
+      + '<span class="standings-game-name">' + g.name + '</span>'
+      + '<button class="standings-reset-btn" id="reset-btn-' + safeId + '" onclick="offerStandingsReset(\'' + safeId + '\')">Reset</button>'
+      + '</div>'
+      + '<div class="standings-confirm" id="reset-confirm-' + safeId + '">'
+      + '  <div class="standings-confirm-text">Clear all standings for ' + g.name + '? Every player\'s score is permanently removed. This can\'t be undone.</div>'
+      + '  <div class="standings-confirm-actions">'
+      + '    <button class="standings-cancel-btn" onclick="cancelStandingsReset(\'' + safeId + '\')">Cancel</button>'
+      + '    <button class="standings-yes-btn" onclick="confirmStandingsReset(\'' + safeId + '\',\'' + g.name.replace(/'/g,"\\'") + '\')">Yes, Reset</button>'
+      + '  </div>'
+      + '  <div class="standings-msg" id="reset-msg-' + safeId + '"></div>'
+      + '</div>';
+  }).join('');
+}
+
+window.offerStandingsReset = function(table){
+  $('reset-confirm-' + table).className = 'standings-confirm show';
+};
+window.cancelStandingsReset = function(table){
+  $('reset-confirm-' + table).className = 'standings-confirm';
+  $('reset-msg-' + table).textContent = '';
+};
+window.confirmStandingsReset = async function(table, gameName){
+  var msgEl = $('reset-msg-' + table);
+  msgEl.className = 'standings-msg';
+  msgEl.textContent = 'Clearing…';
+  try{
+    var r = await fetch(SUPABASE_URL + '/rest/v1/' + table + '?id=gt.0', {
+      method: 'DELETE',
+      headers: authHeaders()
+    });
+    if(!r.ok){
+      msgEl.className = 'standings-msg bad';
+      msgEl.textContent = 'Something went wrong — please try again';
+      return;
+    }
+    msgEl.className = 'standings-msg ok';
+    msgEl.textContent = gameName + '\'s standings cleared.';
+    setTimeout(function(){
+      $('reset-confirm-' + table).className = 'standings-confirm';
+      msgEl.textContent = '';
+    }, 2000);
+  }catch(e){
+    msgEl.className = 'standings-msg bad';
+    msgEl.textContent = 'Connection problem — please try again';
+  }
+};
+
+// ── licenses ──
+window.loadLicenses = async function(){
+  var tbody = $('rows');
+  tbody.innerHTML = '<tr><td colspan="6" class="empty">Loading…</td></tr>';
+  try{
+    var url = SUPABASE_URL + '/rest/v1/licenses?select=*&product=eq.' + encodeURIComponent(currentProduct);
+    var r = await fetch(url, { headers: authHeaders() });
+    if (!r.ok){
+      var errBody = await r.json().catch(function(){ return {}; });
+      tbody.innerHTML = '<tr><td colspan="6" class="empty">Error: '+esc(errBody.message||r.statusText)+'</td></tr>';
+      return;
+    }
+    var data = await r.json();
+    var rows = (data || []).slice().sort(function(a,b){
+      if (!a.expires_at && !b.expires_at) return 0;
+      if (!a.expires_at) return 1;
+      if (!b.expires_at) return -1;
+      return a.expires_at < b.expires_at ? -1 : 1;
+    });
+    if (!rows.length){ tbody.innerHTML='<tr><td colspan="6" class="empty">No '+esc(currentProduct)+' licenses yet. Add your first school above.</td></tr>'; $('count').textContent=''; return; }
+    $('count').textContent = '('+rows.length+')';
+    renderRows(rows, tbody);
+  }catch(e){
+    tbody.innerHTML = '<tr><td colspan="6" class="empty">Load failed: '+esc(e.message)+'</td></tr>';
+  }
+};
+
+function renderRows(data, tbody){
+  var today = new Date();
+  tbody.innerHTML = data.map(function(r){
+    var statusPill, expText='';
+    var expired = r.expires_at && new Date(r.expires_at+'T23:59:59') < today;
+    if (!r.active) statusPill = '<span class="pill inactive">Revoked</span>';
+    else if (expired) statusPill = '<span class="pill expired">Expired</span>';
+    else statusPill = '<span class="pill active">Active</span>';
+
+    if (r.expires_at){
+      var days = Math.ceil((new Date(r.expires_at+'T23:59:59') - today)/86400000);
+      if (days < 0) expText = r.expires_at;
+      else if (days <= 30) expText = '<span class="exp-soon">'+r.expires_at+' ('+days+'d)</span>';
+      else expText = r.expires_at;
+    } else expText = '<span style="color:#5a6070">never</span>';
+
+    return '<tr>'
+      + '<td class="code-cell">'+esc(r.code)+'</td>'
+      + '<td>'+esc(r.school_name||'')+'</td>'
+      + '<td>'+expText+'</td>'
+      + '<td>'+statusPill+'</td>'
+      + '<td style="color:#8892a0;font-size:.82rem">'+esc(r.notes||'')+'</td>'
+      + '<td><div class="row-actions">'
+        + '<button class="mini renew" onclick="renew(\''+r.id+'\')">+1yr</button>'
+        + '<button class="mini toggle" onclick="toggle(\''+r.id+'\','+(r.active?'false':'true')+')">'+(r.active?'Revoke':'Enable')+'</button>'
+        + '<button class="mini del" onclick="del(\''+r.id+'\',\''+esc(r.code)+'\')">Delete</button>'
+      + '</div></td>'
+      + '</tr>';
+  }).join('');
+}
+
+window.addLicense = async function(){
+  var code = $('a-code').value.trim().toUpperCase();
+  var school = $('a-school').value.trim();
+  var expires = $('a-expires').value || null;
+  var notes = $('a-notes').value.trim() || null;
+  if (!code){ setAddMsg('Enter a code','bad'); return; }
+  if (!school){ setAddMsg('Enter a school name','bad'); return; }
+  try{
+    var r = await fetch(SUPABASE_URL + '/rest/v1/licenses', {
+      method: 'POST',
+      headers: Object.assign({}, authHeaders(), { 'Prefer': 'return=minimal' }),
+      body: JSON.stringify({ code: code, school_name: school, expires_at: expires, notes: notes, active: true, product: currentProduct })
+    });
+    if (!r.ok){
+      var errBody = await r.json().catch(function(){ return {}; });
+      setAddMsg(errBody.code==='23505' ? 'That code already exists' : (errBody.message || 'Could not add license'), 'bad');
+      return;
+    }
+    $('a-code').value=''; $('a-school').value=''; $('a-expires').value=''; $('a-notes').value='';
+    setAddMsg('✓ License added to '+currentProduct,'ok');
+    loadLicenses();
+  }catch(e){
+    setAddMsg('Connection problem — please try again','bad');
+  }
+};
+function setAddMsg(m,c){ $('add-msg').className='msg '+c; $('add-msg').textContent=m; setTimeout(function(){ if($('add-msg').textContent===m) $('add-msg').textContent=''; }, 4000); }
+
+window.renew = async function(id){
+  var d = new Date(); d.setFullYear(d.getFullYear()+1);
+  var newDate = d.toISOString().slice(0,10);
+  try{
+    var r = await fetch(SUPABASE_URL + '/rest/v1/licenses?id=eq.' + encodeURIComponent(id), {
+      method: 'PATCH',
+      headers: Object.assign({}, authHeaders(), { 'Prefer': 'return=minimal' }),
+      body: JSON.stringify({ expires_at: newDate, active: true })
+    });
+    if (!r.ok){ alert('Error renewing license'); return; }
+    loadLicenses();
+  }catch(e){ alert('Connection problem — please try again'); }
+};
+
+window.toggle = async function(id, makeActive){
+  try{
+    var r = await fetch(SUPABASE_URL + '/rest/v1/licenses?id=eq.' + encodeURIComponent(id), {
+      method: 'PATCH',
+      headers: Object.assign({}, authHeaders(), { 'Prefer': 'return=minimal' }),
+      body: JSON.stringify({ active: makeActive })
+    });
+    if (!r.ok){ alert('Error updating license'); return; }
+    loadLicenses();
+  }catch(e){ alert('Connection problem — please try again'); }
+};
+
+window.del = async function(id, code){
+  if (!confirm('Delete license "'+code+'"? This permanently removes it and locks out that school.')) return;
+  try{
+    var r = await fetch(SUPABASE_URL + '/rest/v1/licenses?id=eq.' + encodeURIComponent(id), {
+      method: 'DELETE',
+      headers: authHeaders()
+    });
+    if (!r.ok){ alert('Error deleting license'); return; }
+    loadLicenses();
+  }catch(e){ alert('Connection problem — please try again'); }
+};
+
+function esc(s){ return String(s).replace(/[&<>"']/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]}); }
+
+checkSession();
+</script>
+</body>
+</html>
