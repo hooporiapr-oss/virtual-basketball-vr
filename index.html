@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<title>VR Arcade · Access</title>
+<title>Dynamic Basketball · Access</title>
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
   html,body{
@@ -56,13 +56,13 @@
 
 <div id="stage">
   <div id="panel">
-    <div class="gate-title">VR <span>ARCADE</span></div>
+    <div class="gate-title">DYNAMIC <span>BASKETBALL</span></div>
     <div class="sub">Enter Your Access Code</div>
 
     <div class="code-panel">
       <div class="code-label">Access Code</div>
       <input class="code-input" id="gate-code" maxlength="40" placeholder="• • • •" autocomplete="off" onkeydown="if(event.key==='Enter')tryEnter()">
-      <button class="enter-btn" onclick="tryEnter()">Enter VR Arcade →</button>
+      <button class="enter-btn" onclick="tryEnter()">Enter Dynamic Basketball →</button>
       <div class="err" id="gate-err"></div>
     </div>
 
@@ -75,18 +75,18 @@ var $=function(id){return document.getElementById(id)};
 
 // ══════════════════════════════════════════════════════
 //  LICENSE SYSTEM — this is its own separate repo, so it uses
-//  its own distinct session key ('vr-arcade-gate-pass') and its
-//  own distinct product scope ('vr-arcade') in the SAME Supabase
+//  its own distinct session key ('dynamic-basketball-gate-pass') and its
+//  own distinct product scope ('dynamic-basketball') in the SAME Supabase
 //  licenses table every other product already uses. A code
 //  issued for BPM Basketball, Ritnome, Hooporia, or Never Miss A
 //  Shot will NOT unlock this gate, and vice versa, even though
 //  all five live in the same table. To issue / expire / revoke
-//  VR Arcade licenses, admin.html has a matching product tab for
-//  'vr-arcade'.
+//  Dynamic Basketball licenses, admin.html has a matching product tab for
+//  'dynamic-basketball'.
 // ══════════════════════════════════════════════════════
 var SUPABASE_URL = 'https://sdaphocueugzfvjovuxd.supabase.co';
 var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkYXBob2N1ZXVnemZ2am92dXhkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM2MjQyMDgsImV4cCI6MjA5OTIwMDIwOH0.pDAzf4P6dD9eNEBlnP95SdF5BI-R84-Rdc0vKzYcn7M';
-var PRODUCT = 'vr-arcade';
+var PRODUCT = 'dynamic-basketball';
 // ══════════════════════════════════════════════════════
 
 function tryEnter(){
@@ -118,8 +118,8 @@ function tryEnter(){
       if (new Date() > exp){ return reject('This license has expired'); }
     }
 
-    sessionStorage.setItem('vr-arcade-gate-pass','1');
-    sessionStorage.setItem('vr-arcade-license', input.toUpperCase());
+    sessionStorage.setItem('dynamic-basketball-gate-pass','1');
+    sessionStorage.setItem('dynamic-basketball-license', input.toUpperCase());
     window.location.href = 'vr-shoot-it-own-it.html';
   })
   .catch(function(){
