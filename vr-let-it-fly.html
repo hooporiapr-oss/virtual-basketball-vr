@@ -242,7 +242,7 @@ body.buzzer-shake{animation:buzzerShake .5s cubic-bezier(.36,.07,.19,.97) 2}
 
 <!-- INTRO -->
 <div id="screen-intro">
-  <a class="intro-back" href="vr-shoot-it-own-it.html">← Back</a>
+  <a class="intro-back" href="vr-the-handle.html">← Back</a>
   <button class="intro-fs" id="fsBtn" data-i18n="fullscreen">⛶ Fullscreen</button>
   <div class="box-lang-toggle">
     <button class="box-lang-btn active" id="introLangEN">EN</button>
@@ -255,11 +255,11 @@ body.buzzer-shake{animation:buzzerShake .5s cubic-bezier(.36,.07,.19,.97) 2}
   <div class="best-line" id="bestLine"></div>
   <button class="box-open-btn" id="openBoxBtn" data-i18n="standingsBtn">🏆 THE STANDINGS</button>
   <div class="game-switcher">
-    <a class="switcher-btn game-active" href="vr-shoot-it-own-it.html">1<br>Shoot It.</a>
-    <a class="switcher-btn game-active" href="vr-buckets-dont-lie.html">2<br>Buckets</a>
-    <a class="switcher-btn game-active" href="vr-make-it-count.html">3<br>Make It</a>
-    <span class="switcher-btn game-current">4<br>Let Fly</span>
-    <a class="switcher-btn game-active" href="vr-the-handle.html">5<br>Handle</a>
+    <a class="switcher-btn game-active" href="vr-the-handle.html">1<br>Handle</a>
+    <a class="switcher-btn game-active" href="vr-shoot-it-own-it.html">2<br>Shoot It.</a>
+    <a class="switcher-btn game-active" href="vr-buckets-dont-lie.html">3<br>Buckets</a>
+    <a class="switcher-btn game-active" href="vr-make-it-count.html">4<br>Make It</a>
+    <span class="switcher-btn game-current">5<br>Let Fly</span>
   </div>
   </div>
 </div>
@@ -284,7 +284,7 @@ body.buzzer-shake{animation:buzzerShake .5s cubic-bezier(.36,.07,.19,.97) 2}
 
 <!-- END -->
 <div id="screen-end">
-  <a class="intro-back" href="vr-shoot-it-own-it.html">← Back</a>
+  <a class="intro-back" href="vr-the-handle.html">← Back</a>
   <div class="final-num" id="endNum">0</div>
   <div class="final-label">Total Points</div>
   <div class="final-bpm-big" id="endBpm"></div>
@@ -513,7 +513,7 @@ $('openBoxBtn').onclick=function(){
   $('screen-box').style.display='flex';
 };
 $('closeBoxBtn').onclick=function(){
-  window.location.href='vr-shoot-it-own-it.html';
+  window.location.href='vr-the-handle.html';
 };
 
 var fsb=$('fsBtn');
