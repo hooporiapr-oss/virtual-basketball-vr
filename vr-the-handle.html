@@ -218,7 +218,7 @@ body.buzzer-shake{animation:buzzerShake .5s cubic-bezier(.36,.07,.19,.97) 2}
 
 <!-- INTRO -->
 <div id="screen-intro">
-  <a class="intro-back" href="vr-shoot-it-own-it.html">← Back</a>
+  <a class="intro-back" href="index.html">← Back</a>
   <button class="intro-fs" id="fsBtn" data-i18n="fullscreen">⛶ Fullscreen</button>
   <div class="box-lang-toggle">
     <button class="box-lang-btn active" id="introLangEN">EN</button>
@@ -231,11 +231,11 @@ body.buzzer-shake{animation:buzzerShake .5s cubic-bezier(.36,.07,.19,.97) 2}
   <div class="best-line" id="bestLine"></div>
   <button class="box-open-btn" id="openBoxBtn" data-i18n="standingsBtn">🏆 THE STANDINGS</button>
   <div class="game-switcher">
-    <a class="switcher-btn game-active" href="vr-shoot-it-own-it.html">1<br>Shoot It.</a>
-    <a class="switcher-btn game-active" href="vr-buckets-dont-lie.html">2<br>Buckets</a>
-    <a class="switcher-btn game-active" href="vr-make-it-count.html">3<br>Make It</a>
-    <a class="switcher-btn game-active" href="vr-let-it-fly.html">4<br>Let Fly</a>
-    <span class="switcher-btn game-current">5<br>Handle</span>
+    <span class="switcher-btn game-current">1<br>Handle</span>
+    <a class="switcher-btn game-active" href="vr-shoot-it-own-it.html">2<br>Shoot It.</a>
+    <a class="switcher-btn game-active" href="vr-buckets-dont-lie.html">3<br>Buckets</a>
+    <a class="switcher-btn game-active" href="vr-make-it-count.html">4<br>Make It</a>
+    <a class="switcher-btn game-active" href="vr-let-it-fly.html">5<br>Let Fly</a>
   </div>
   </div>
 </div>
@@ -260,7 +260,7 @@ body.buzzer-shake{animation:buzzerShake .5s cubic-bezier(.36,.07,.19,.97) 2}
 
 <!-- END -->
 <div id="screen-end">
-  <a class="intro-back" href="vr-shoot-it-own-it.html">← Back</a>
+  <button class="intro-back" id="endBackBtn" style="cursor:pointer;font-family:inherit">← Back</button>
   <div class="final-num" id="endNum">0</div>
   <div class="final-label">Total Score</div>
   <div class="final-bpm-big" id="endBpm"></div>
@@ -269,6 +269,7 @@ body.buzzer-shake{animation:buzzerShake .5s cubic-bezier(.36,.07,.19,.97) 2}
   <div id="endSub">Great choices. Next player, beat this number!</div>
   <button class="next-player-btn" id="nextPlayerBtn">▶ Next Player</button>
   <a href="vr-shoot-it-own-it.html" style="display:block;margin-top:12px;max-width:280px;margin-left:auto;margin-right:auto;text-decoration:none;text-align:center;padding:14px 24px;border-radius:100px;background:linear-gradient(135deg,#00e5ff,#7c3aed);color:#0a0a12;font-weight:900;letter-spacing:1px;font-size:.95rem">▶ NEXT GAME</a>
+  <button class="box-open-btn" id="endStandingsBtn" style="margin-top:12px">🏆 THE STANDINGS</button>
   <div class="session-line" id="sessionLine"></div>
 </div>
 
@@ -473,13 +474,34 @@ function renderStandings(){
   });
 }
 
+// Standings can be opened from either the intro screen or the end
+// screen. Track which one, so closing it returns the player to
+// wherever they actually were, not always back to the intro.
+var standingsReturnScreen='screen-intro';
+
 $('openBoxBtn').onclick=function(){
+  standingsReturnScreen='screen-intro';
   renderStandings();
   $('screen-intro').style.display='none';
   $('screen-box').style.display='flex';
 };
+$('endStandingsBtn').onclick=function(){
+  standingsReturnScreen='screen-end';
+  renderStandings();
+  $('screen-end').style.display='none';
+  $('screen-box').style.display='flex';
+};
 $('closeBoxBtn').onclick=function(){
-  window.location.href='vr-shoot-it-own-it.html';
+  $('screen-box').style.display='none';
+  $(standingsReturnScreen).style.display='flex';
+};
+// The end screen's own Back button — stays on this page and returns
+// to the intro screen, the same way Next Player already does. Never
+// navigates back through the gate, since that would force a real
+// player to re-enter their access code just to leave a finished round.
+$('endBackBtn').onclick=function(){
+  $('screen-end').style.display='none';
+  $('screen-intro').style.display='flex';
 };
 
 var fsb=$('fsBtn');
