@@ -516,9 +516,17 @@ if(fsg)fsg.onclick=async function(){try{if(!document.fullscreenElement)await doc
 // tap, whatever that turns out to be (not specifically the Start
 // button), and uses that to request fullscreen immediately, rather
 // than waiting for a specific button further down the flow.
+//
+// Explicitly skipped for taps on a link — switcher buttons and the
+// back link navigate away from this page entirely, and starting a
+// fullscreen transition in the middle of that click interrupts the
+// browser's own in-flight handling of it, which is what was causing
+// the switcher to silently stay on The Handle instead of actually
+// navigating to the next game.
 (function(){
-  function grabFullscreenOnFirstTap(){
-    try{ if(!document.fullscreenElement && document.documentElement.requestFullscreen){ document.documentElement.requestFullscreen().catch(function(){}); } }catch(e){}
+  function grabFullscreenOnFirstTap(e){
+    if(e.target.closest('a'))return;
+    try{ if(!document.fullscreenElement && document.documentElement.requestFullscreen){ document.documentElement.requestFullscreen().catch(function(){}); } }catch(err){}
     document.removeEventListener('pointerdown',grabFullscreenOnFirstTap,true);
   }
   document.addEventListener('pointerdown',grabFullscreenOnFirstTap,true);
