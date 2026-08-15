@@ -8,7 +8,7 @@ if (sessionStorage.getItem('dynamic-basketball-gate-pass') !== '1') {
 </script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>LET IT FLY. | Dynamic Basketball</title>
+<title>BUCKETS DON'T LIE. | Dynamic Basketball</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:100%;height:100%;overflow:hidden;font-family:Arial,sans-serif;color:#fff;background:#000;user-select:none;-webkit-user-select:none;touch-action:manipulation}
@@ -51,7 +51,7 @@ body.buzzer-shake{animation:buzzerShake .5s cubic-bezier(.36,.07,.19,.97) 2}
 #stimulus{
   position:absolute;top:50%;width:110px;height:110px;border-radius:50%;
   transform:translate(-50%,-50%) scale(0);
-  transition:transform .08s cubic-bezier(.34,1.56,.64,1),left .5s linear,top .5s linear;
+  transition:transform .08s cubic-bezier(.34,1.56,.64,1);
   display:flex;align-items:center;justify-content:center;
   font-size:3.2rem;color:#fff;line-height:1;text-shadow:0 2px 6px rgba(0,0,0,.6),0 0 4px rgba(0,0,0,.5);
   background:
@@ -78,7 +78,7 @@ body.buzzer-shake{animation:buzzerShake .5s cubic-bezier(.36,.07,.19,.97) 2}
    markup through innerHTML repeatedly, which is what a "sometimes
    wrong shape" symptom in a VR browser's rendering engine points to:
    a repaint glitch on repeated SVG creation, not a logic error in
-   which direction was assigned. */
+   which direction was assigned (confirmed correct in testing). */
 .glyph-solid,.glyph-bank{display:none;width:1em;height:1em;align-items:center;justify-content:center}
 .glyph-solid.active,.glyph-bank.active{display:flex}
 .glyph-bank svg{width:100%;height:100%;display:block}
@@ -179,7 +179,9 @@ body.buzzer-shake{animation:buzzerShake .5s cubic-bezier(.36,.07,.19,.97) 2}
 
 /* Game switcher — every game's start screen carries the same 4-slot
    row, so any game (and its own standings, one tap further in) is
-   reachable from any other game without a hub in between. */
+   reachable from any other game without a hub in between. Slots for
+   games not yet built stay visibly present but disabled — an honest
+   "coming soon", not a broken link. */
 .game-switcher{display:flex;gap:8px;max-width:420px;width:100%;margin:18px auto 0}
 .switcher-btn{flex:1;padding:10px 4px;border-radius:12px;text-decoration:none;text-align:center;font-size:.62rem;font-weight:900;letter-spacing:.04em;text-transform:uppercase;line-height:1.3}
 .switcher-btn.game-active{border:2px solid rgba(124,58,237,.5);background:rgba(124,58,237,.12);color:#c9a3fa}
@@ -249,7 +251,7 @@ body.buzzer-shake{animation:buzzerShake .5s cubic-bezier(.36,.07,.19,.97) 2}
     <button class="box-lang-btn" id="introLangES">ES</button>
   </div>
   <div class="intro-content">
-  <div class="vrr-logo">LET IT <span>FLY.</span></div>
+  <div class="vrr-logo">BUCKETS <span>DON'T LIE.</span></div>
   <input type="text" id="playerNameInputMain" class="name-input" maxlength="20" placeholder="Your name" autocomplete="off" style="max-width:320px;margin:8px auto">
   <button class="big-btn" id="bigStart" data-i18n="start" onclick="handleStartClick()">▶ START</button>
   <div class="best-line" id="bestLine"></div>
@@ -257,9 +259,9 @@ body.buzzer-shake{animation:buzzerShake .5s cubic-bezier(.36,.07,.19,.97) 2}
   <div class="game-switcher">
     <a class="switcher-btn game-active" href="vr-the-handle.html">1<br>Handle</a>
     <a class="switcher-btn game-active" href="vr-shoot-it-own-it.html">2<br>Shoot It.</a>
-    <a class="switcher-btn game-active" href="vr-buckets-dont-lie.html">3<br>Buckets</a>
+    <span class="switcher-btn game-current">3<br>Buckets</span>
     <a class="switcher-btn game-active" href="vr-make-it-count.html">4<br>Make It</a>
-    <span class="switcher-btn game-current">5<br>Let Fly</span>
+    <a class="switcher-btn game-active" href="vr-let-it-fly.html">5<br>Let Fly</a>
   </div>
   <div style="margin-top:24px;font-size:.68rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#4a5058">Powered by <a href="https://hooporia.com" target="_blank" rel="noopener" style="color:#8892a0;font-style:italic;text-decoration:underline">Gostar Digital</a></div>
   </div>
@@ -269,7 +271,7 @@ body.buzzer-shake{animation:buzzerShake .5s cubic-bezier(.36,.07,.19,.97) 2}
 <div id="screen-box">
   <button class="box-back-btn" id="closeBoxBtn" style="margin-top:0;margin-bottom:20px">← Back</button>
   <div class="box-title">THE <span>STANDINGS</span></div>
-  <div class="box-sub">Let It Fly. · Player vs. Player</div>
+  <div class="box-sub">Buckets Don't Lie. · Player vs. Player</div>
 
   <div style="width:100%;max-width:600px">
     <div class="box-section">
@@ -295,7 +297,7 @@ body.buzzer-shake{animation:buzzerShake .5s cubic-bezier(.36,.07,.19,.97) 2}
   <h2 id="endHead">Drill Complete!</h2>
   <div id="endSub">Great choices. Next player, beat this number!</div>
   <button class="next-player-btn" id="nextPlayerBtn">▶ Next Player</button>
-  <a href="vr-the-handle.html" style="display:block;margin-top:12px;max-width:280px;margin-left:auto;margin-right:auto;text-decoration:none;text-align:center;padding:14px 24px;border-radius:100px;background:linear-gradient(135deg,#00e5ff,#7c3aed);color:#0a0a12;font-weight:900;letter-spacing:1px;font-size:.95rem">▶ NEXT GAME</a>
+  <a href="vr-make-it-count.html" style="display:block;margin-top:12px;max-width:280px;margin-left:auto;margin-right:auto;text-decoration:none;text-align:center;padding:14px 24px;border-radius:100px;background:linear-gradient(135deg,#00e5ff,#7c3aed);color:#0a0a12;font-weight:900;letter-spacing:1px;font-size:.95rem">▶ NEXT GAME</a>
   <div class="session-line" id="sessionLine"></div>
 </div>
 
@@ -305,27 +307,27 @@ function getFlashMs(){return Math.round(60000/FLASH_BPM)}
 var PACE_MS=600;
 var CONTEST_MS=60000; // how many threes can you make in a minute —
 // the clock is the only thing that ends this format, not a round count.
-var BEST_KEY='vr-let-it-fly-best';
-var BEST_MS_KEY='vr-let-it-fly-best-ms';
+var BEST_KEY='vr-buckets-dont-lie-best';
+var BEST_MS_KEY='vr-buckets-dont-lie-best-ms';
 
 function $(id){return document.getElementById(id)}
 
-// Translations for the intro screen only — the title "Let It Fly."
-// stays as-is in both languages, since it's a brand name, not a
-// description, same as everywhere else in Never Miss A Shot.
+// Translations for the intro screen only — the title "Buckets Don't Lie."
+// stays as-is in both languages, same as "Flash Basketball" itself,
+// since these are brand names, not descriptions.
 var INTRO_I18N={
   en:{
     fullscreen:'⛶ Fullscreen',
-    subtitle:'Never Miss A Shot · The Real Challenge',
-    rules:'<b>60 seconds.</b> A basketball never sits still — it drifts continuously across the court, carrying an arrow the whole time. But now there are eight possible shots, not four. Your 4 Swish Shots, plus 4 Bank Shots too, all sitting on your buttons every round, reshuffled each time. Position never means anything. Read past the motion to the true shot, and tap the match as fast as you can. Every make is scored on real speed — the faster you are, the more points you earn. A wrong shot or no response at all earns nothing, but costs you nothing either. How many points can you rack up before the clock runs out?',
+    subtitle:'Flash Basketball VR · The Real Challenge',
+    rules:'<b>60 seconds.</b> A basketball flashes once, at a new spot each time, carrying an arrow — but now there are eight possible shots, not four. Your 4 Swish Shots, plus 4 Bank Shots too, all sitting on your buttons every single round, reshuffled each time. Read it fast and tap the matching shot before the beat passes. Every make is scored on real speed — the faster you are, the more points you earn. A wrong shot or no response at all earns nothing, but costs you nothing either. How many points can you rack up before the clock runs out?',
     start:'▶ START',
     standingsBtn:'🏆 THE STANDINGS',
     yourBest:'Your best: <b>{n} pts</b>'
   },
   es:{
     fullscreen:'⛶ Pantalla Completa',
-    subtitle:'Velocidad de Reacción · El Verdadero Desafío',
-    rules:'<b>60 segundos.</b> Un balón de baloncesto nunca se queda quieto — se desliza continuamente por la cancha, mostrando una flecha todo el tiempo. Pero ahora hay ocho tiros posibles, no cuatro. Tus 4 Swish Shots, más 4 Bank Shots también, todos en tus botones cada ronda, mezclados de nuevo cada vez. La posición nunca importa. Lee más allá del movimiento hasta el tiro real, y toca el correcto tan rápido como puedas. Cada acierto se puntúa según tu velocidad real — mientras más rápido seas, más puntos ganas. Un tiro equivocado o ninguna respuesta no gana nada, pero tampoco te cuesta nada. ¿Cuántos puntos puedes acumular antes de que se acabe el tiempo?',
+    subtitle:'Flash Basketball VR · El Verdadero Desafío',
+    rules:'<b>60 segundos.</b> Un balón de baloncesto destella una vez, en un lugar nuevo cada vez, mostrando una flecha — pero ahora hay ocho tiros posibles, no cuatro. Tus 4 Swish Shots, más 4 Bank Shots también, todos en tus botones cada ronda, mezclados de nuevo cada vez. Léelo rápido y toca el tiro correcto antes de que pase el compás. Cada acierto se puntúa según tu velocidad real — mientras más rápido seas, más puntos ganas. Un tiro equivocado o ninguna respuesta no gana nada, pero tampoco te cuesta nada. ¿Cuántos puntos puedes acumular antes de que se acabe el tiempo?',
     start:'▶ EMPEZAR',
     standingsBtn:'🏆 LA CLASIFICACIÓN',
     yourBest:'Tu mejor: <b>{n} pts</b>'
@@ -359,7 +361,8 @@ $('introLangES').addEventListener('click',function(){
 var currentPlayerName='';
 // Start reads the name directly from the input sitting right on the
 // intro screen and launches straight into the game — no separate
-// name-entry screen to transition through first.
+// name-entry screen to transition through first. One fewer screen
+// swap is one fewer chance for a VR browser's layout to misbehave.
 function handleStartClick(){
   var nameField=$('playerNameInputMain');
   var name=nameField.value.trim();
@@ -405,7 +408,7 @@ function saveBestMs(){try{localStorage.setItem(BEST_MS_KEY,String(bestAvgMs))}ca
 // until the network comes back.
 var SB_URL='https://sdaphocueugzfvjovuxd.supabase.co';
 var SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNkYXBob2N1ZXVnemZ2am92dXhkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODM2MjQyMDgsImV4cCI6MjA5OTIwMDIwOH0.pDAzf4P6dD9eNEBlnP95SdF5BI-R84-Rdc0vKzYcn7M';
-var SB_TABLE='vr_let_it_fly_standings';
+var SB_TABLE='vr_buckets_dont_lie_standings';
 
 function recordScoreToStandings(name,finalScore,made,attempts,avgMs,shots){
   return fetch(SB_URL+'/rest/v1/'+SB_TABLE,{
@@ -461,8 +464,8 @@ function renderTapLog(container,shots,finalScore){
 
 function renderStandings(){
   // The ranked board is shared across every device, so it genuinely
-  // has to wait on a real fetch. Show that honestly
-  // rather than pretending it's instant too.
+  // has to wait on a real fetch. Show that honestly rather than
+  // pretending it's instant.
   var listEl=$('standingsList');
   var tapLogEl=$('standingsTapLog');
   tapLogEl.style.display='none';
@@ -586,17 +589,18 @@ function randomStagePos(){
   return {x:x,y:y};
 }
 
-// Same filled-triangle glyph Alley-Oop already proved works —
-// each direction is just that one shape, rotated. Combined here with
-// Unstoppable's own signature: the ball never just sits still, it
-// keeps drifting the whole time it's waiting for a response.
+// Same filled-triangle glyph the original game already proved works —
+// each direction is just that one shape, rotated. No thin line-arrow
+// substitutes; the visual quality matches the proven original exactly.
 var ROTATIONS={up:0,'up-right':45,right:90,'down-right':135,down:180,'down-left':225,left:270,'up-left':315};
 var ALL_DIRS=['up','up-right','right','down-right','down','down-left','left','up-left'];
 // Swish Shots (the 4 cardinal reads) are the plain solid white
 // triangle, same as always. Bank Shots (the 4 diagonal reads) are a
 // pure directional chevron — the two angled sides converging on the
-// tip, with the bottom base edge removed entirely. Both shapes exist
-// as permanent DOM elements from page load — only a CSS class
+// tip, with the bottom base edge removed entirely. A closed triangle
+// outline can still read as a generic shape; dropping the base makes
+// this unmistakably a pointer, not a shape, at a glance. Both shapes
+// exist as permanent DOM elements from page load — only a CSS class
 // toggles which one shows, so neither is ever destroyed and rebuilt.
 function isDiagonal(dir){return dir.indexOf('-')!==-1}
 function setButtonGlyph(glyphEl,dir){
@@ -611,7 +615,6 @@ function setButtonGlyph(glyphEl,dir){
   }
 }
 var noResponseTimer=null;
-var wanderTimer=null;
 
 function nextTrial(){
   if(phase!=='running')return;
@@ -627,30 +630,27 @@ function nextTrial(){
   awaitingResponse=true;
   shuffleButtonLayout();
 
-  // Position is never the signal; the arrow riding along with it is.
-  // Reading past the motion to the true direction — now with eight
-  // possible readings instead of four — is the actual skill this
-  // drill trains.
-  if(wanderTimer)clearInterval(wanderTimer);
-  wanderTimer=setInterval(function(){
-    if(!stimulus.classList.contains('visible'))return;
-    var p=randomStagePos();
-    stimulus.style.left=p.x+'px';
-    stimulus.style.top=p.y+'px';
-  },550);
+  // A single flash, one beat at 120 BPM, no wandering — then it's gone
+  // and the screen goes blank while the response is still fully live.
+  // Tapping is valid the whole time, both during the brief flash and
+  // through the blank screen after — this is deliberately not "you had
+  // to catch it while visible," it's "you saw it, now respond."
+  timers.push(setTimeout(function(){
+    stimulus.classList.remove('visible');
+  },getFlashMs()));
 
   // Same protection as the other reaction drills — no per-tap deadline,
   // but 5 real seconds of total silence on one target ends the drill.
   stopNoResponseTimer();
   noResponseTimer=setTimeout(handleNoResponse,5000);
 }
-function stopWander(){if(wanderTimer){clearInterval(wanderTimer);wanderTimer=null}}
 function stopNoResponseTimer(){if(noResponseTimer){clearTimeout(noResponseTimer);noResponseTimer=null}}
 
 // All 8 directions sit on the buttons every single round — nothing
 // hidden, nothing rotated out of the pool. What changes every round
 // is WHICH physical slot each direction lands in, so there's no
 // "top-right button = up-right" muscle memory to fall back on.
+// Reading both the target and the buttons is required on every tap.
 var SLOT_IDS=['slot0','slot1','slot2','slot3','slot4','slot5','slot6','slot7'];
 function shuffleButtonLayout(){
   var shuffled=ALL_DIRS.slice();
@@ -672,7 +672,6 @@ function handleNoResponse(){
   if(phase!=='running')return;
   if(!awaitingResponse)return;
   awaitingResponse=false;
-  stopWander();
   stimulus.classList.remove('visible');
   idx++;
   misses++;
@@ -700,7 +699,6 @@ function handleChoice(side){
   awaitingResponse=false;
   var rt=performance.now()-shownAt;
   var isCorrect=(side===currentSide);
-  stopWander();
   var dotRect=stimulus.getBoundingClientRect();
   var rx=dotRect.left+dotRect.width/2, ry=dotRect.top+dotRect.height/2;
   stimulus.classList.remove('visible');
@@ -757,7 +755,7 @@ function endDrill(){
     misses++;
     shotLog.push({hit:false,bpm:0,pts:0,noResponse:true});
   }
-  phase='done';clrT();clearInterval(contestTimerInterval);stopNoResponseTimer();stopWander();stimulus.classList.remove('visible');
+  phase='done';clrT();clearInterval(contestTimerInterval);stopNoResponseTimer();stimulus.classList.remove('visible');
   var finalScore=Math.max(0,score);
   var avgRT=rtCount?Math.round(totalRT/rtCount):0;
   var accPct=idx>0?Math.round((correctCount/idx)*100):0;
