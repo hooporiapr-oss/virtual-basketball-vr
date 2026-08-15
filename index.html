@@ -90,6 +90,13 @@ var PRODUCT = 'dynamic-basketball';
 // ══════════════════════════════════════════════════════
 
 function tryEnter(){
+  // Fired directly from the person's own tap on this button — the
+  // one moment in the whole flow guaranteed to count as a genuine
+  // user gesture, which is the only thing browsers will ever honor a
+  // fullscreen request from. Requesting it here means the entire
+  // rest of the experience, starting with the very first game, opens
+  // already fullscreen — no separate fullscreen tap needed later.
+  try{ if(!document.fullscreenElement && document.documentElement.requestFullscreen){ document.documentElement.requestFullscreen().catch(function(){}); } }catch(e){}
   var input = $('gate-code').value.trim();
   if (!input){ return; }
   $('gate-err').style.color = '';
