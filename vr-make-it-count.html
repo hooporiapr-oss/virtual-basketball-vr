@@ -173,7 +173,7 @@ body.buzzer-shake{animation:buzzerShake .5s cubic-bezier(.36,.07,.19,.97) 2}
 .switcher-btn.game-active{border:2px solid rgba(255,107,53,.5);background:rgba(255,107,53,.12);color:#ffb38a}
 .switcher-btn.game-current{border:2px solid rgba(255,107,53,.8);background:rgba(255,107,53,.28);color:#fff}
 .switcher-btn.game-soon{border:2px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03);color:#4a5058;cursor:default}
-.final-num{font-size:6rem;font-weight:900;color:#7c3aed;line-height:1;text-shadow:0 0 60px rgba(124,58,237,.9)}
+.final-num{font-size:6rem;font-weight:900;color:#FF6B35;line-height:1;text-shadow:0 0 60px rgba(255,107,53,.9)}
 .final-label{font-size:.8rem;letter-spacing:.2em;text-transform:uppercase;color:#9fb3c8;margin-top:10px}
 .final-bpm-big{font-size:1.8rem;font-weight:900;color:#ffd35a;margin-top:10px}
 .final-acc{margin-top:6px;font-size:1.1rem;color:#ffd35a;font-weight:900}
@@ -181,7 +181,7 @@ body.buzzer-shake{animation:buzzerShake .5s cubic-bezier(.36,.07,.19,.97) 2}
 .final-misses.clean{color:#00D9A5;text-shadow:0 0 20px rgba(0,217,165,.5)}
 #screen-end h2{font-size:1.8rem;font-weight:900;margin:24px 0 8px}
 #endSub{font-size:.9rem;color:#9fb3c8;line-height:1.6;max-width:400px}
-.next-player-btn{margin-top:28px;height:64px;padding:0 40px;border:none;border-radius:16px;background:linear-gradient(120deg,#7c3aed,#5b21b6);color:#fff;font-size:1.15rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;box-shadow:0 0 30px rgba(124,58,237,.6)}
+.next-player-btn{margin-top:28px;height:64px;padding:0 40px;border:none;border-radius:16px;background:linear-gradient(120deg,#FF6B35,#ff8a5c);color:#fff;font-size:1.15rem;font-weight:900;letter-spacing:.08em;text-transform:uppercase;cursor:pointer;box-shadow:0 0 30px rgba(255,107,53,.6)}
 .session-line{margin-top:22px;font-size:.72rem;letter-spacing:.16em;text-transform:uppercase;color:#7fa8c0}
 
 #countdown{position:fixed;inset:0;z-index:56;display:none;align-items:center;justify-content:center;background:#000}
@@ -265,18 +265,11 @@ body.buzzer-shake{animation:buzzerShake .5s cubic-bezier(.36,.07,.19,.97) 2}
 
 <!-- END -->
 <div id="screen-end">
-  <a class="intro-back" href="vr-shoot-it-own-it.html">← Back</a>
   <div class="final-num" id="endNum">0</div>
   <div class="final-label">Total Points</div>
-  <div class="final-bpm-big" id="endBpm"></div>
-  <div class="final-acc" id="endAcc"></div>
-  <div class="final-misses" id="endMisses"></div>
-  <div id="bpmAvgLabel" style="display:none;margin-top:6px;font-size:.85rem;color:#9fb3c8"></div>
-  <h2 id="endHead">Drill Complete!</h2>
-  <div id="endSub">Great choices. Next player, beat this number!</div>
-  <button class="next-player-btn" id="nextPlayerBtn">▶ Next Player</button>
-  <a href="vr-shoot-it-own-it.html" style="display:block;margin-top:12px;max-width:280px;margin-left:auto;margin-right:auto;text-decoration:none;text-align:center;padding:14px 24px;border-radius:100px;background:linear-gradient(135deg,#00e5ff,#7c3aed);color:#0a0a12;font-weight:900;letter-spacing:1px;font-size:.95rem">▶ NEXT GAME</a>
-  <div class="session-line" id="sessionLine"></div>
+  <button class="next-player-btn" id="nextPlayerBtn">← Back</button>
+  <a href="vr-shoot-it-own-it.html" onclick="sessionStorage.setItem('db-carryover-name',currentPlayerName)" style="display:block;margin-top:12px;max-width:280px;margin-left:auto;margin-right:auto;text-decoration:none;text-align:center;padding:14px 24px;border-radius:100px;background:linear-gradient(135deg,#00e5ff,#FF6B35);color:#0a0a12;font-weight:900;letter-spacing:1px;font-size:.95rem">▶ NEXT GAME</a>
+  <a class="box-open-btn" href="dynamic-basketball-standings.html" style="display:flex;align-items:center;justify-content:center;text-decoration:none;margin-top:12px">🏆 THE STANDINGS</a>
 </div>
 
 <script>
@@ -350,6 +343,20 @@ function handleStartClick(){
 $('playerNameInputMain').addEventListener('keydown',function(e){
   if(e.key==='Enter')handleStartClick();
 });
+
+// Arriving here via "Next Game" from another game in the chain — the
+// name they already typed once carries over, so they're not asked to
+// type it again for what's really the same session, just a different
+// drill. Read once, then cleared, so it never lingers into a later,
+// unrelated visit to this same page.
+(function(){
+  var carried=sessionStorage.getItem('db-carryover-name');
+  if(carried){
+    $('playerNameInputMain').value=carried;
+    currentPlayerName=carried;
+    sessionStorage.removeItem('db-carryover-name');
+  }
+})();
 
 var phase='idle';
 var idx=0,score=0,best=0,correctCount=0,totalRT=0,rtCount=0,bestAvgMs=0,misses=0;
@@ -735,26 +742,6 @@ function endDrill(){
   setTimeout(function(){document.body.classList.remove('buzzer-shake');f.classList.remove('buzzer')},1000);
 
   $('endNum').textContent=finalScore;
-  $('endBpm').textContent=correctCount+' SWISHES IN 60 SECONDS';
-  $('endAcc').textContent=correctCount+'/'+idx+' made · '+accPct+'% accuracy';
-  $('endMisses').textContent=misses+' MISS'+(misses===1?'':'ES');
-  $('endMisses').className='final-misses'+(misses===0?' clean':'');
-
-  if(isNewPts&&finalScore>0){
-    $('endHead').textContent='🎉 New Best!';$('endSub').textContent='New high score — '+finalScore+' points, '+correctCount+' swishes. Nothing but net!';
-  }else{
-    $('endHead').textContent="Time's Up!";$('endSub').textContent='Great shooting. Next player, beat this number!';
-  }
-
-  if(avgRT>0&&(sessionBest===0||avgRT<sessionBest)){
-    sessionBest=avgRT;
-  }
-  playersThisSession++;
-  $('sessionLine').textContent='Players this session: '+playersThisSession+(sessionBest>0?('  ·  Best pace: '+bpmFromMs(sessionBest)+' BPM'):'');
-
-  lastAvgBpm=avgRT>0?bpmFromMs(avgRT):0;
-  $('bpmAvgLabel').innerHTML=lastAvgBpm>0?('Your Average: <b>'+lastAvgBpm+' BPM</b>'):'';
-  $('bpmAvgLabel').style.display=lastAvgBpm>0?'block':'none';
 
   recordScoreToStandings(currentPlayerName,finalScore,correctCount,idx,avgRT,shotLog);
 
