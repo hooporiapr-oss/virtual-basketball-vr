@@ -252,7 +252,6 @@ body.buzzer-shake{animation:buzzerShake .5s cubic-bezier(.36,.07,.19,.97) 2}
   <div class="vrr-logo">LET IT <span>FLY.</span></div>
   <input type="text" id="playerNameInputMain" class="name-input" maxlength="20" placeholder="Your name" autocomplete="off" style="max-width:320px;margin:8px auto">
   <button class="big-btn" id="bigStart" data-i18n="start" onclick="handleStartClick()">▶ ENTER THE GAMEBOARD</button>
-  <div class="best-line" id="bestLine"></div>
   <button class="box-open-btn" id="openBoxBtn" data-i18n="standingsBtn">🏆 THE STANDINGS</button>
   <div class="game-switcher">
     <a class="switcher-btn game-active" href="vr-the-handle.html">1<br>Handle</a>
@@ -319,16 +318,14 @@ var INTRO_I18N={
     subtitle:'Never Miss A Shot · The Real Challenge',
     rules:'<b>60 seconds.</b> A basketball never sits still — it drifts continuously across the court, carrying an arrow the whole time. But now there are eight possible shots, not four. Your 4 Swish Shots, plus 4 Bank Shots too, all sitting on your buttons every round, reshuffled each time. Position never means anything. Read past the motion to the true shot, and tap the match as fast as you can. Every make is scored on real speed — the faster you are, the more points you earn. A wrong shot or no response at all earns nothing, but costs you nothing either. How many points can you rack up before the clock runs out?',
     start:'▶ ENTER THE GAMEBOARD',
-    standingsBtn:'🏆 THE STANDINGS',
-    yourBest:'Your best: <b>{n} pts</b>'
+    standingsBtn:'🏆 THE STANDINGS'
   },
   es:{
     fullscreen:'⛶ Pantalla Completa',
     subtitle:'Velocidad de Reacción · El Verdadero Desafío',
     rules:'<b>60 segundos.</b> Un balón de baloncesto nunca se queda quieto — se desliza continuamente por la cancha, mostrando una flecha todo el tiempo. Pero ahora hay ocho tiros posibles, no cuatro. Tus 4 Swish Shots, más 4 Bank Shots también, todos en tus botones cada ronda, mezclados de nuevo cada vez. La posición nunca importa. Lee más allá del movimiento hasta el tiro real, y toca el correcto tan rápido como puedas. Cada acierto se puntúa según tu velocidad real — mientras más rápido seas, más puntos ganas. Un tiro equivocado o ninguna respuesta no gana nada, pero tampoco te cuesta nada. ¿Cuántos puntos puedes acumular antes de que se acabe el tiempo?',
     start:'▶ EMPEZAR',
-    standingsBtn:'🏆 LA CLASIFICACIÓN',
-    yourBest:'Tu mejor: <b>{n} pts</b>'
+    standingsBtn:'🏆 LA CLASIFICACIÓN'
   }
 };
 var introLang='en';
@@ -337,9 +334,6 @@ function applyIntroTranslations(){
   $('fsBtn').textContent=t.fullscreen;
   $('bigStart').textContent=t.start;
   $('openBoxBtn').textContent=t.standingsBtn;
-  // best-line carries a live number, so it's re-rendered from the
-  // current best value rather than just swapping static text
-  if(best>0)$('bestLine').innerHTML=t.yourBest.replace('{n}',best);
 }
 $('introLangEN').addEventListener('click',function(){
   introLang='en';
@@ -391,7 +385,6 @@ function loadBest(){
   try{best=parseInt(localStorage.getItem(BEST_KEY)||'0',10)||0}catch(e){}
   try{bestAvgMs=parseInt(localStorage.getItem(BEST_MS_KEY)||'0',10)||0}catch(e){bestAvgMs=0}
   $('hBest').textContent=best;
-  $('bestLine').innerHTML=best>0?('Your best: <b>'+best+' pts</b>'):'';
 }
 function saveBest(){try{localStorage.setItem(BEST_KEY,String(best))}catch(e){}}
 function saveBestMs(){try{localStorage.setItem(BEST_MS_KEY,String(bestAvgMs))}catch(e){}}
