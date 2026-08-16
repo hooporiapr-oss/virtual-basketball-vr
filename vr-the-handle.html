@@ -519,15 +519,19 @@ if(fsg)fsg.onclick=async function(){try{if(!document.fullscreenElement)await doc
 // button), and uses that to request fullscreen immediately, rather
 // than waiting for a specific button further down the flow.
 //
-// Explicitly skipped for taps on a link — switcher buttons and the
-// back link navigate away from this page entirely, and starting a
-// fullscreen transition in the middle of that click interrupts the
-// browser's own in-flight handling of it, which is what was causing
-// the switcher to silently stay on The Handle instead of actually
-// navigating to the next game.
+// Explicitly skipped for taps on a link, or on closeBoxBtn — both
+// can navigate away from this page entirely (closeBoxBtn does it via
+// JS, when standings were reached from the hub, rather than a native
+// href), and starting a fullscreen transition in the middle of that
+// click interrupts the browser's own in-flight handling of it. That
+// was the exact cause of the switcher needing two taps to leave the
+// page earlier, and it's also why landing directly on standings via
+// the hub and tapping Back needed two taps too — closeBoxBtn is a
+// button, not a link, so the earlier fix never covered it.
 (function(){
   function grabFullscreenOnFirstTap(e){
     if(e.target.closest('a'))return;
+    if(e.target.closest('#closeBoxBtn'))return;
     try{ if(!document.fullscreenElement && document.documentElement.requestFullscreen){ document.documentElement.requestFullscreen().catch(function(){}); } }catch(err){}
     document.removeEventListener('pointerdown',grabFullscreenOnFirstTap,true);
   }
