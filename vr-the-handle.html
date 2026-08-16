@@ -228,13 +228,10 @@ body.buzzer-shake{animation:buzzerShake .5s cubic-bezier(.36,.07,.19,.97) 2}
   <div class="vrr-logo">THE <span>HANDLE</span></div>
   <input type="text" id="playerNameInputMain" class="name-input" maxlength="20" placeholder="Your name" autocomplete="off" style="max-width:320px;margin:8px auto">
   <button class="big-btn" id="bigStart" data-i18n="start" onclick="handleStartClick()">▶ ENTER THE GAMEBOARD</button>
-  <button class="box-open-btn" id="openBoxBtn" data-i18n="standingsBtn">🏆 THE STANDINGS</button>
   <div class="game-switcher">
     <span class="switcher-btn game-current">1<br>Handle</span>
     <a class="switcher-btn game-active" href="vr-shoot-it-own-it.html">2<br>Shoot It.</a>
-    <a class="switcher-btn game-active" href="vr-buckets-dont-lie.html">3<br>Buckets</a>
-    <a class="switcher-btn game-active" href="vr-make-it-count.html">4<br>Make It</a>
-    <a class="switcher-btn game-active" href="vr-let-it-fly.html">5<br>Let Fly</a>
+    <a class="switcher-btn game-active" href="vr-make-it-count.html">3<br>Make It</a>
   </div>
   <div style="margin-top:24px;font-size:.68rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#4a5058">Powered by <a href="https://hooporia.com" target="_blank" rel="noopener" style="color:#8892a0;font-style:italic;text-decoration:underline">Gostar Digital</a></div>
   </div>
@@ -303,7 +300,6 @@ function applyIntroTranslations(){
   var t=INTRO_I18N[introLang];
   $('fsBtn').textContent=t.fullscreen;
   $('bigStart').textContent=t.start;
-  $('openBoxBtn').textContent=t.standingsBtn;
 }
 $('introLangEN').addEventListener('click',function(){
   introLang='en';
@@ -473,12 +469,17 @@ function renderStandings(){
 // wherever they actually were, not always back to the intro.
 var standingsReturnScreen='screen-intro';
 
-$('openBoxBtn').onclick=function(){
-  standingsReturnScreen='screen-intro';
+// The intro screen's own Standings button is gone — this game's
+// standings are now only reached from the shared hub, which links
+// here with ?standings=1. Caught on load, before the player ever
+// sees the intro screen at all.
+if(new URLSearchParams(window.location.search).get('standings')==='1'){
+  standingsReturnScreen='hub';
   renderStandings();
   $('screen-intro').style.display='none';
   $('screen-box').style.display='flex';
-};
+}
+
 $('endStandingsBtn').onclick=function(){
   standingsReturnScreen='screen-end';
   renderStandings();
@@ -486,6 +487,13 @@ $('endStandingsBtn').onclick=function(){
   $('screen-box').style.display='flex';
 };
 $('closeBoxBtn').onclick=function(){
+  // Reached from the hub — there's no button left on this game's own
+  // intro screen to get back into standings, so returning to that
+  // screen would be a dead end. Go back to the hub itself instead.
+  if(standingsReturnScreen==='hub'){
+    window.location.href='dynamic-basketball-standings.html';
+    return;
+  }
   $('screen-box').style.display='none';
   $(standingsReturnScreen).style.display='flex';
 };
