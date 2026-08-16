@@ -236,13 +236,10 @@ body.buzzer-shake{animation:buzzerShake .5s cubic-bezier(.36,.07,.19,.97) 2}
   <div class="vrr-logo">MAKE IT <span>COUNT.</span></div>
   <input type="text" id="playerNameInputMain" class="name-input" maxlength="20" placeholder="Your name" autocomplete="off" style="max-width:320px;margin:8px auto">
   <button class="big-btn" id="bigStart" data-i18n="start" onclick="handleStartClick()">▶ ENTER THE GAMEBOARD</button>
-  <button class="box-open-btn" id="openBoxBtn" data-i18n="standingsBtn">🏆 THE STANDINGS</button>
   <div class="game-switcher">
     <a class="switcher-btn game-active" href="vr-the-handle.html">1<br>Handle</a>
     <a class="switcher-btn game-active" href="vr-shoot-it-own-it.html">2<br>Shoot It.</a>
-    <a class="switcher-btn game-active" href="vr-buckets-dont-lie.html">3<br>Buckets</a>
-    <span class="switcher-btn game-current">4<br>Make It</span>
-    <a class="switcher-btn game-active" href="vr-let-it-fly.html">5<br>Let Fly</a>
+    <span class="switcher-btn game-current">3<br>Make It</span>
   </div>
   <div style="margin-top:24px;font-size:.68rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#4a5058">Powered by <a href="https://hooporia.com" target="_blank" rel="noopener" style="color:#8892a0;font-style:italic;text-decoration:underline">Gostar Digital</a></div>
   </div>
@@ -278,7 +275,7 @@ body.buzzer-shake{animation:buzzerShake .5s cubic-bezier(.36,.07,.19,.97) 2}
   <h2 id="endHead">Drill Complete!</h2>
   <div id="endSub">Great choices. Next player, beat this number!</div>
   <button class="next-player-btn" id="nextPlayerBtn">▶ Next Player</button>
-  <a href="vr-let-it-fly.html" style="display:block;margin-top:12px;max-width:280px;margin-left:auto;margin-right:auto;text-decoration:none;text-align:center;padding:14px 24px;border-radius:100px;background:linear-gradient(135deg,#00e5ff,#7c3aed);color:#0a0a12;font-weight:900;letter-spacing:1px;font-size:.95rem">▶ NEXT GAME</a>
+  <a href="vr-the-handle.html" style="display:block;margin-top:12px;max-width:280px;margin-left:auto;margin-right:auto;text-decoration:none;text-align:center;padding:14px 24px;border-radius:100px;background:linear-gradient(135deg,#00e5ff,#7c3aed);color:#0a0a12;font-weight:900;letter-spacing:1px;font-size:.95rem">▶ NEXT GAME</a>
   <div class="session-line" id="sessionLine"></div>
 </div>
 
@@ -317,7 +314,6 @@ function applyIntroTranslations(){
   var t=INTRO_I18N[introLang];
   $('fsBtn').textContent=t.fullscreen;
   $('bigStart').textContent=t.start;
-  $('openBoxBtn').textContent=t.standingsBtn;
 }
 $('introLangEN').addEventListener('click',function(){
   introLang='en';
@@ -486,13 +482,17 @@ function renderStandings(){
   });
 }
 
-$('openBoxBtn').onclick=function(){
+// The intro screen's own Standings button is gone — this game's
+// standings are now only reached from the shared hub, which links
+// here with ?standings=1. Caught on load, before the player ever
+// sees the intro screen at all.
+if(new URLSearchParams(window.location.search).get('standings')==='1'){
   renderStandings();
   $('screen-intro').style.display='none';
   $('screen-box').style.display='flex';
-};
+}
 $('closeBoxBtn').onclick=function(){
-  window.location.href='vr-the-handle.html';
+  window.location.href='dynamic-basketball-standings.html';
 };
 
 var fsb=$('fsBtn');
