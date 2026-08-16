@@ -228,7 +228,6 @@ body.buzzer-shake{animation:buzzerShake .5s cubic-bezier(.36,.07,.19,.97) 2}
   <div class="vrr-logo">THE <span>HANDLE</span></div>
   <input type="text" id="playerNameInputMain" class="name-input" maxlength="20" placeholder="Your name" autocomplete="off" style="max-width:320px;margin:8px auto">
   <button class="big-btn" id="bigStart" data-i18n="start" onclick="handleStartClick()">▶ ENTER THE GAMEBOARD</button>
-  <div class="best-line" id="bestLine"></div>
   <button class="box-open-btn" id="openBoxBtn" data-i18n="standingsBtn">🏆 THE STANDINGS</button>
   <div class="game-switcher">
     <span class="switcher-btn game-current">1<br>Handle</span>
@@ -289,16 +288,14 @@ var INTRO_I18N={
     subtitle:'Flash Basketball VR · Flash & Recall',
     rules:'<b>60 seconds.</b> A basketball flashes once, at a new spot each time, carrying an arrow. Then it\'s gone — read it, remember it, and tap the matching Swish Shot whenever you\'re ready. Every make is scored on real speed — the faster you are, the more points you earn. A wrong shot or no response at all earns nothing, but costs you nothing either. How many points can you rack up before the clock runs out?',
     start:'▶ ENTER THE GAMEBOARD',
-    standingsBtn:'🏆 THE STANDINGS',
-    yourBest:'Your best: <b>{n} pts</b>'
+    standingsBtn:'🏆 THE STANDINGS'
   },
   es:{
     fullscreen:'⛶ Pantalla Completa',
     subtitle:'Flash Basketball VR · Destello y Recuerda',
     rules:'<b>60 segundos.</b> Un balón de baloncesto destella una vez, en un lugar nuevo cada vez, mostrando una flecha. Luego desaparece — léela, recuérdala, y toca el Swish Shot correcto cuando estés listo. Cada acierto se puntúa según tu velocidad real — mientras más rápido seas, más puntos ganas. Un tiro equivocado o ninguna respuesta no gana nada, pero tampoco te cuesta nada. ¿Cuántos puntos puedes acumular antes de que se acabe el tiempo?',
     start:'▶ EMPEZAR',
-    standingsBtn:'🏆 LA CLASIFICACIÓN',
-    yourBest:'Tu mejor: <b>{n} pts</b>'
+    standingsBtn:'🏆 LA CLASIFICACIÓN'
   }
 };
 var introLang='en';
@@ -307,9 +304,6 @@ function applyIntroTranslations(){
   $('fsBtn').textContent=t.fullscreen;
   $('bigStart').textContent=t.start;
   $('openBoxBtn').textContent=t.standingsBtn;
-  // best-line carries a live number, so it's re-rendered from the
-  // current best value rather than just swapping static text
-  if(best>0)$('bestLine').innerHTML=t.yourBest.replace('{n}',best);
 }
 $('introLangEN').addEventListener('click',function(){
   introLang='en';
@@ -360,7 +354,6 @@ function loadBest(){
   best=0;
   try{best=parseInt(localStorage.getItem(BEST_KEY)||'0',10)||0}catch(e){}
   $('hBest').textContent=best;
-  $('bestLine').innerHTML=best>0?('Your best: <b>'+best+' pts</b>'):'';
 }
 function saveBest(){try{localStorage.setItem(BEST_KEY,String(best))}catch(e){}}
 
