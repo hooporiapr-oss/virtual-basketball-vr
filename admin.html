@@ -116,7 +116,8 @@
       <button class="prod-tab active" id="tab-hooporia" onclick="switchProduct('hooporia')">🏀 Memory Basketball</button>
       <button class="prod-tab" id="tab-mobile" onclick="switchProduct('mobile')">📱 Mobile</button>
       <button class="prod-tab" id="tab-dynamic-basketball" onclick="switchProduct('dynamic-basketball')">🥽 Dynamic Basketball</button>
-      <button class="prod-tab" id="tab-the-handle" onclick="switchProduct('the-handle')">🧠 The Handle</button>
+      <button class="prod-tab" id="tab-swish-basketball" onclick="switchProduct('swish-basketball')">🎯 Swish Basketball</button>
+      <button class="prod-tab" id="tab-swish-standings" onclick="switchProduct('swish-standings')">🏆 Swish Standings</button>
     </div>
 
     <div class="mobile-note" id="mobile-note">⚠️ Mobile codes work differently: a device stays unlocked permanently once it enters a valid code, using local on-device storage rather than a per-visit check. Revoking or deleting a code here blocks it for any <b>new</b> device — it will not retroactively lock out a device that already unlocked with it.</div>
@@ -174,6 +175,9 @@ var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYm
 
 var $ = function(id){ return document.getElementById(id); };
 var currentProduct = 'hooporia';
+var editingId = null;
+var lastLicenseRows = [];
+var lastLicenseTbody = null;
 var accessToken = null, refreshToken = null;
 
 function saveSession(at, rt){
@@ -268,9 +272,10 @@ window.switchProduct = function(product){
   $('tab-hooporia').className = 'prod-tab' + (product==='hooporia' ? ' active' : '');
   $('tab-mobile').className = 'prod-tab' + (product==='mobile' ? ' active' : '');
   $('tab-dynamic-basketball').className = 'prod-tab' + (product==='dynamic-basketball' ? ' active' : '');
-  $('tab-the-handle').className = 'prod-tab' + (product==='the-handle' ? ' active' : '');
+  $('tab-swish-basketball').className = 'prod-tab' + (product==='swish-basketball' ? ' active' : '');
+  $('tab-swish-standings').className = 'prod-tab' + (product==='swish-standings' ? ' active' : '');
   $('mobile-note').className = 'mobile-note' + (product==='mobile' ? ' show' : '');
-  var label = product==='hooporia' ? '(Memory Basketball)' : product==='mobile' ? '(Mobile)' : product==='the-handle' ? '(The Handle)' : '(Dynamic Basketball)';
+  var label = product==='hooporia' ? '(Memory Basketball)' : product==='mobile' ? '(Mobile)' : product==='swish-basketball' ? '(Swish Basketball)' : product==='swish-standings' ? '(Swish Standings)' : '(Dynamic Basketball)';
   $('add-product-label').textContent = label;
   $('list-product-label').textContent = label;
   loadLicenses();
@@ -287,15 +292,17 @@ var STANDINGS_BY_PRODUCT = {
     { name: 'Shoot It. Own It.', table: 'vr_shoot_it_own_it_standings' },
     { name: 'Make It Count.', table: 'vr_make_it_count_standings' }
   ],
-  'the-handle': [
-    { name: 'The Handle', table: 'vr_the_handle_standings' }
+  'swish-basketball': [
+    { name: 'Swish Basketball', table: 'vr_swish_basketball_standings' }
+  ],
+  'swish-standings': [
+    { name: 'Swish Basketball', table: 'vr_swish_basketball_standings' }
   ],
   'hooporia': [
-    { name: 'The Handle', table: 'ritnome_mobile_handle_standings' },
+    { name: 'Swish', table: 'hooporia_swish_standings' },
     { name: 'Basketball Recall', table: 'hooporia_basketball_recall_standings' },
     { name: 'Basketball Reflex', table: 'hooporia_basketball_reflex_standings' },
-    { name: 'Basketball Replay', table: 'hooporia_basketball_replay_standings' },
-    { name: 'Basketball Recognition', table: 'hooporia_basketball_recognition_standings' }
+    { name: 'Flash', table: 'hooporia_flash_standings' }
   ],
   'mobile': [
     { name: 'The Handle', table: 'ritnome_mobile_handle_standings' }
@@ -388,6 +395,8 @@ window.loadLicenses = async function(){
 };
 
 function renderRows(data, tbody){
+  lastLicenseRows = data;
+  lastLicenseTbody = tbody;
   var today = new Date();
   tbody.innerHTML = data.map(function(r){
     var statusPill, expText='';
@@ -403,6 +412,20 @@ function renderRows(data, tbody){
       else expText = r.expires_at;
     } else expText = '<span style="color:#5a6070">never</span>';
 
+    if (r.id === editingId){
+      return '<tr>'
+        + '<td><input id="edit-code-'+r.id+'" value="'+esc(r.code)+'" style="width:100%"></td>'
+        + '<td><input id="edit-school-'+r.id+'" value="'+esc(r.school_name||'')+'" style="width:100%"></td>'
+        + '<td><input id="edit-expires-'+r.id+'" type="date" value="'+esc(r.expires_at||'')+'" style="width:100%"></td>'
+        + '<td>'+statusPill+'</td>'
+        + '<td><input id="edit-notes-'+r.id+'" value="'+esc(r.notes||'')+'" style="width:100%"></td>'
+        + '<td><div class="row-actions">'
+          + '<button class="mini renew" onclick="saveEdit(\''+r.id+'\')">Save</button>'
+          + '<button class="mini toggle" onclick="cancelEdit()">Cancel</button>'
+        + '</div></td>'
+        + '</tr>';
+    }
+
     return '<tr>'
       + '<td class="code-cell">'+esc(r.code)+'</td>'
       + '<td>'+esc(r.school_name||'')+'</td>'
@@ -410,6 +433,7 @@ function renderRows(data, tbody){
       + '<td>'+statusPill+'</td>'
       + '<td style="color:#8892a0;font-size:.82rem">'+esc(r.notes||'')+'</td>'
       + '<td><div class="row-actions">'
+        + '<button class="mini toggle" onclick="startEdit(\''+r.id+'\')">Edit</button>'
         + '<button class="mini renew" onclick="renew(\''+r.id+'\')">+1yr</button>'
         + '<button class="mini toggle" onclick="toggle(\''+r.id+'\','+(r.active?'false':'true')+')">'+(r.active?'Revoke':'Enable')+'</button>'
         + '<button class="mini del" onclick="del(\''+r.id+'\',\''+esc(r.code)+'\')">Delete</button>'
@@ -444,6 +468,39 @@ window.addLicense = async function(){
   }
 };
 function setAddMsg(m,c){ $('add-msg').className='msg '+c; $('add-msg').textContent=m; setTimeout(function(){ if($('add-msg').textContent===m) $('add-msg').textContent=''; }, 4000); }
+
+window.startEdit = function(id){
+  editingId = id;
+  renderRows(lastLicenseRows, lastLicenseTbody);
+};
+
+window.cancelEdit = function(){
+  editingId = null;
+  renderRows(lastLicenseRows, lastLicenseTbody);
+};
+
+window.saveEdit = async function(id){
+  var code = $('edit-code-'+id).value.trim().toUpperCase();
+  var school = $('edit-school-'+id).value.trim();
+  var expires = $('edit-expires-'+id).value || null;
+  var notes = $('edit-notes-'+id).value.trim() || null;
+  if (!code){ alert('Enter a code'); return; }
+  if (!school){ alert('Enter a school name'); return; }
+  try{
+    var r = await fetch(SUPABASE_URL + '/rest/v1/licenses?id=eq.' + encodeURIComponent(id), {
+      method: 'PATCH',
+      headers: Object.assign({}, authHeaders(), { 'Prefer': 'return=minimal' }),
+      body: JSON.stringify({ code: code, school_name: school, expires_at: expires, notes: notes })
+    });
+    if (!r.ok){
+      var errBody = await r.json().catch(function(){ return {}; });
+      alert(errBody.code==='23505' ? 'That code already exists' : (errBody.message || 'Error saving changes'));
+      return;
+    }
+    editingId = null;
+    loadLicenses();
+  }catch(e){ alert('Connection problem — please try again'); }
+};
 
 window.renew = async function(id){
   var d = new Date(); d.setFullYear(d.getFullYear()+1);
